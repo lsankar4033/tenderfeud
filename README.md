@@ -18,9 +18,7 @@ this minimum *isn't* met by the time the poll ends, the poll creator is refunded
 some default minimum, but we could also make this set-able by the poll creator.
 
 ## Open questions
-- is it easy to set up lotionjs w/tendermint node?
-- how are genesis validators/initial coins set up?
-- how do we set up the 'testnet'?
+- how does network work in lotionjs? i.e. how do we network multiple nodes on the same blockchain?
 - what's the right setting of parameters (payouts, etc.) that incentivize good behaviour?
 
 ## Tasks
