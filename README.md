@@ -27,3 +27,7 @@ some default minimum, but we could also make this set-able by the poll creator.
 - Build poll protocol (expand out...)
 - Create testnet deployment
 - presentation...?
+
+## Dependencies
+- tendermint + abci
+- pipenv (for dependency mgmt)
