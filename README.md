@@ -18,6 +18,8 @@ this minimum *isn't* met by the time the poll ends, the poll creator is refunded
 some default minimum, but we could also make this set-able by the poll creator.
 
 ## Open questions
+- is it easy to set up lotionjs w/tendermint node?
+- how are genesis validators/initial coins set up?
 - how do we set up the 'testnet'?
 - what's the right setting of parameters (payouts, etc.) that incentivize good behaviour?
 
@@ -27,6 +29,8 @@ some default minimum, but we could also make this set-able by the poll creator.
 - Build poll protocol (expand out...)
 - Create testnet deployment
 - presentation...?
+...
+- make this README better
 
 ## Dependencies
 - tendermint + abci

@@ -1,0 +1,22 @@
+{
+  "name": "tenderfeud",
+  "version": "0.1.0",
+  "description": "family feud on tendermint via lotionjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsankar4033/tenderfeud.git"
+  },
+  "author": "lsankar4033",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lsankar4033/tenderfeud/issues"
+  },
+  "homepage": "https://github.com/lsankar4033/tenderfeud#readme",
+  "dependencies": {
+    "lotion": "^0.1.17"
+  }
+}
