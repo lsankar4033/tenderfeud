@@ -29,7 +29,3 @@ some default minimum, but we could also make this set-able by the poll creator.
 - presentation...?
 ...
 - make this README better
-
-## Dependencies
-- tendermint + abci
-- pipenv (for dependency mgmt)
