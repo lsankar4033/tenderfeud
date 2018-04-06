@@ -36,9 +36,16 @@ Lotionjs app should:
 - what's the right setting of parameters (payouts, etc.) that incentivize good behaviour?
 
 ## Tasks
-- Decide on genesis polls
+Tech:
+- build v0.1, static validator set
+  - (LS) build protocol for token genesis + transfer
+  - add on protocol for poll mgmt
+- deploy v0.1 to cloud w/webapp potentially
+- build v0.2, dynamic validators
+
+Users:
+- Decide on some saucy initial polls
 - Make friends with 10 ppl who could be early users of what we make
-- write poll protocol on lotionjs
-- write webapp for adding txes
-- presentation...?
-- make this README better
+
+Comp:
+- presentation
