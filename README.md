@@ -17,6 +17,17 @@ To avoid the degenerate case of only *one* answer, we can set polls up to have a
 this minimum *isn't* met by the time the poll ends, the poll creator is refunded their payment. Maybe there's
 some default minimum, but we could also make this set-able by the poll creator.
 
+### Lotionjs implementation
+
+Create some cloud validators. Distribute code for running validators with these cloud validators hardcoded in
+as peers.
+
+Create webapp for non-validators to send transactions.
+
+Lotionjs app should:
+- process payment txes
+- process poll txes
+
 ## Open questions
 - ~~how does network work in lotionjs? i.e. how do we network multiple nodes on the same blockchain?~~
   - seems that tendermint under lotion does automatic peer discovery and other lotion nodes can connect to
