@@ -18,14 +18,16 @@ this minimum *isn't* met by the time the poll ends, the poll creator is refunded
 some default minimum, but we could also make this set-able by the poll creator.
 
 ## Open questions
-- how does network work in lotionjs? i.e. how do we network multiple nodes on the same blockchain?
+- ~~how does network work in lotionjs? i.e. how do we network multiple nodes on the same blockchain?~~
+  - seems that tendermint under lotion does automatic peer discovery and other lotion nodes can connect to
+    your network with their initial list of peers. from there, it's straightforward to create a simple web
+    interface for interacting with the thing
 - what's the right setting of parameters (payouts, etc.) that incentivize good behaviour?
 
 ## Tasks
 - Decide on genesis polls
 - Make friends with 10 ppl who could be early users of what we make
-- Build poll protocol (expand out...)
-- Create testnet deployment
+- write poll protocol on lotionjs
+- write webapp for adding txes
 - presentation...?
-...
 - make this README better
