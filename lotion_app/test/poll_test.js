@@ -101,7 +101,7 @@ describe('VoteHandler', function() {
     assert.equal(answerVotes[0], address);
   });
   
-  it('should throw error on invalid test', () => {
+  it('should throw error on invalid poll question', () => {
     let question = 'who is vitalik?';
     let questionHash = sha256(question)
     let answer = 'just a friend';
@@ -128,6 +128,44 @@ describe('VoteHandler', function() {
 
     let chain = {};
 		let expError = "Poll is invalid or inactive"
+		var error;
+		try {
+  		polls.txHandler(state, tx, chain)
+		} catch (e) {
+  		error = e;
+		}
+    assert.equal(error.message, expError)
+
+  });
+
+  it('should throw error on invalid signature', () => {
+    let question = 'who is vitalik?';
+    let questionHash = sha256(question)
+    let answer = 'just a friend';
+
+    let polls = require('../src/polls')({});
+
+    let state = {
+      balances: {
+        'foo': 100
+      },
+      activePolls: {
+
+      }
+    };
+
+    let privkey = sha256('satoshi');
+    let privkeyDummy = sha256('dummy');
+    let pubkey = privkeyToPubkey(privkeyDummy);
+
+    let tx = buildVoteTx({
+      question: question,
+      voterPubkey: pubkey,
+      answer: answer
+    }, privkey);
+
+    let chain = {};
+		let expError = "Signature does not match public key!"
 		var error;
 		try {
   		polls.txHandler(state, tx, chain)
