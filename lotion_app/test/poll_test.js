@@ -72,7 +72,7 @@ describe('CreateHandler', function() {
 
   });
   
-    it('should throw error on insufficient funds', () => {
+  it('should throw error on insufficient funds', () => {
   	let polls = require('../src/polls')({});
   	
   	let privkey = sha256('satoshi');
@@ -83,6 +83,7 @@ describe('CreateHandler', function() {
     	{
         'my boi': ['craig wright']
       })
+    console.log("creator is: " + activePoll.creator)
 
     let state = {
       balances: {

@@ -100,8 +100,8 @@ function createHandler(state, tx, chain) {
   	if (q == questionHash) {
   		found = 1
     }
-    if (q.creator == address) {
-    	creatorSum += q.payout
+    if (state.activePolls[q].creator == address) {
+    	creatorSum += state.activePolls[q].payout
     }
   }
 
@@ -110,8 +110,9 @@ function createHandler(state, tx, chain) {
   }
 
   // Validate balance
+  
   let creatorBalance = state.balances[address] || 0;
-  if (creatorBalance < tx.payout || (creatorBalance - creatorSum - tx.payout) >= 0) {
+  if (creatorBalance < tx.payout || (creatorBalance - creatorSum - tx.payout) < 0) {
     throw Error(`Creator's balance of ${creatorBalance} not enough to pay payout ${tx.payout}`);
   }
 
