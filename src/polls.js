@@ -26,6 +26,7 @@ let { verifyTx, sha256, getTxHash } = require('./utils.js');
 function voteHandler(state, tx, chain) {
   let pubkey = tx.voterPubkey;
   let txHash = getTxHash(tx);
+  let voterAddress = pubkeyToAddress(pubkey)
 
   // Validate signature
   if (!verifyTx(txHash, pubkey, tx.signature)) {
@@ -40,9 +41,9 @@ function voteHandler(state, tx, chain) {
   let poll = state.activePolls[questionHash]
 
   if (tx.answer in poll.answers) {
-    poll.answers[tx.answer].push(tx.voterAddress)
+    poll.answers[tx.answer].push(voterAddress)
   } else {
-    answer = { tx.answer : [tx.voterAddress] }
+    answer = { tx.answer : [tvoterAddress] }
     poll.answers.push(answer)
   }
 }
