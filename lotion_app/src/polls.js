@@ -10,6 +10,7 @@ let { verifyTx, sha256, getTxHash, pubkeyToAddress, clone } = require('./utils.j
 //      question
 //      minAnswers
 //      payout
+//      creator
 //      answers: {answer: [sorted_addresses]}
 //   }
 //  }
@@ -21,6 +22,7 @@ let { verifyTx, sha256, getTxHash, pubkeyToAddress, clone } = require('./utils.j
 //      question
 //      minAnswers
 //      payout
+//      creator
 //      answers: {answer: [sorted_addresses]}
 //      }
 //    ]
@@ -139,10 +141,39 @@ function createHandler(state, tx, chain) {
   }
 }
 
+// Initially exponential, but play with this. This isn't weighted; it's expected that getPayoutWeights is used
+// for that.
+function payoutDistFn(n) {
+  return Math.exp(-1 * n);
+}
+
+function getPayoutWeights(sortedWinners) {
+  let weights = sortedWinners.map( (w) => payoutDistFn(w) );
+  let total = 0;
+  for (var w of weights) {
+    total += w;
+  }
+
+  let normalizedWeights = weights.map( (w) => w / total );
+
+  let winnerToWeight = {}
+  for (var i in normalizedWeights) {
+    winnerToWeight[sortedWinners[i]] = normalizedWeights[i];
+  }
+
+  return winnerToWeight;
+}
+
 // Exponential decay by sort order of payout
 function winnersToPayouts(sortedWinners, totalPayout) {
+  let payoutWeights = getPayoutWeights(sortedWinners);
 
-  return {}
+  let payouts = {}
+  for (var winner in payoutWeights) {
+    payouts[winner] = payoutWeights[winner] * totalPayout;
+  }
+
+  return payouts;
 }
 
 // Gets all answers tied for the most votes
@@ -207,12 +238,15 @@ function blockHandler(state, chain) {
       state.inactivePolls.push(clonedPoll);
       toRemove.push(questionHash);
 
-      let addressToPayout = pollToPayouts(poll);
-      // TODO: Deduct poll creator
-      /*for (var address in addressToPayout) {*/
-        //state.balances[address] = state.balances[address] || 0;
-        //state.balances[address] += addressToPayout[address];
-      /*}*/
+      // Distribute winnings among winners
+      if (poll.payout > 0) {
+        let addressToPayout = pollToPayouts(poll);
+        state.balances[poll.creator] -= poll.payout;
+        for (var payoutAddress in addressToPayout) {
+          state.balances[payoutAddress] = state.balances[payoutAddress] || 0;
+          state.balances[payoutAddress] += addressToPayout[payoutAddress];
+        }
+      }
     }
   }
 

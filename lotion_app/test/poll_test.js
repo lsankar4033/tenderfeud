@@ -11,6 +11,7 @@ function buildVoteTx(txOpts, privkey) {
 
 const defaultQuestion = "who's the fairest crypto of them all?";
 const defaultQHash = sha256(defaultQuestion);
+const defaultCreatorAddress = "foobar"
 
 function buildPoll(opts = {}, answers = {}) {
   return {
@@ -18,8 +19,8 @@ function buildPoll(opts = {}, answers = {}) {
     endBlock: opts['endBlock'] || 10,
     minAnswers: opts['minAnswers'] || 10,
     question: opts['question'] || defaultQuestion,
-    payout: opts['payout'] || 10,
-    creator: opts['creator'] || "",
+    payout: opts['payout'] || 0,
+    creator: opts['creator'] || defaultCreatorAddress,
     answers: answers
   }
 }
@@ -55,7 +56,7 @@ describe('CreateHandler', function() {
 			creatorPubkey: pubkey,
     	creator: address,
   	}
-  	
+
   	let sigHash = getTxHash(tx)
   	tx.signature = getSignature(sigHash, privkey)
 
@@ -71,10 +72,10 @@ describe('CreateHandler', function() {
     assert.equal(error.message, expError)
 
   });
-  
+
   it('should throw error on insufficient funds', () => {
   	let polls = require('../src/polls')({});
-  	
+
   	let privkey = sha256('satoshi');
     let pubkey = privkeyToPubkey(privkey);
     let address = pubkeyToAddress(pubkey);
@@ -103,7 +104,7 @@ describe('CreateHandler', function() {
 			creatorPubkey: pubkey,
     	creator: address,
   	}
-  	
+
   	let sigHash = getTxHash(tx)
   	tx.signature = getSignature(sigHash, privkey)
 
@@ -278,7 +279,7 @@ describe('BlockHandler', () => {
   it("should move an active poll to inactive iff the current block height exceeds the poll's endBlock", () => {
     let polls = require('../src/polls')({});
 
-    let poll = buildPoll({endBlock: 5});
+    let poll = buildPoll({endBlock: 5, payout: 0});
     let initState = {
       activePolls: {
         [defaultQHash]: poll
@@ -287,6 +288,8 @@ describe('BlockHandler', () => {
       blockHeight: 3
     }
     let mutableState = clone(initState);
+
+    console.log(`State: ${JSON.stringify(poll)}`);
 
     polls.blockHandler(mutableState, {height: 3})
     assert.deepStrictEqual(mutableState, initState);
@@ -306,11 +309,11 @@ describe('BlockHandler', () => {
   describe('payouts', () => {
 
     it("doesn't pay anyone out if fewer than required distinct answers", () => {
-
+      // TODO
     });
 
     it("doesn't pay anyone out if multiple answers tied for top spot", () => {
-
+      // TODO
     });
 
     it("pays from creator to winners based on winner vote order", () => {
@@ -319,7 +322,9 @@ describe('BlockHandler', () => {
       let poll = buildPoll(
         {
           endBlock: 5,
-          minAnswers: 2
+          minAnswers: 2,
+          creator: '0',
+          payout: 10
         },
         {
           'winning': ['1', '2', '3'],
@@ -328,10 +333,7 @@ describe('BlockHandler', () => {
       );
       let state = {
         balances: {
-          '0': 1,
-          '1': 1,
-          '2': 1,
-          '3': 1
+          '0': 10
         },
         activePolls: {
           [defaultQHash]: poll
@@ -341,9 +343,13 @@ describe('BlockHandler', () => {
 
       polls.blockHandler(state, {height: 5});
 
-      console.log(`State: ${JSON.stringify(state)}`);
-      // assert.deepStrictEqual(mutableState, {activePolls: {}, inactivePolls: [poll]});
+      let newBalances = state.balances;
+      assert.equal(newBalances['0'], 0);
 
+      // NOTE: May want to match to specific weight fn later
+      assert.equal(newBalances['1'] > newBalances['2'], true);
+      assert.equal(newBalances['2'] > newBalances['3'], true);
+      assert.equal(newBalances['1'] + newBalances['2'] + newBalances['3'], 10);
     });
 
 
