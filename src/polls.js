@@ -4,11 +4,7 @@
 // - become a validator (deposit tokens)
 // - send tokens
 
-let secp256k1 = require('secp256k1')
-
-let { stringify } = require('lotion/lib/json.js')
-
-let { createHash } = require('crypto')
+let { verifyTx, sha256, getTxHash } = require('./utils.js');
 
 // TODO: Use this on app initialization
 const initialState = {
@@ -16,20 +12,28 @@ const initialState = {
   polls: {}
 }
 
-function verifyTx(txHash, pubkey, sig) {
-  return secp256k1.verify(sigHash, signature, pubkey);
-}
-
-
-function sha256(data) {
-  return createHash('sha256').update(data).digest()
-}
-
-
-// Perhaps pull this into its own file that client-side (incl frontend) code uses as well
-function txHash(tx) {
-  // TODO
-}
+// State schema
+// {
+//  balances: {pubkey}
+//  activePolls: {
+//    questionHash: {
+//      startBlock
+//      endBlock
+//      question
+//      answers: {answer: [sorted_pubkeys]}
+//   }
+//  }
+//  inactivePolls: {
+//    [
+//      {
+//        question
+//        answers: {answer: [sorted_pubkeys]}
+//        startBlock
+//        endBlock
+//      }
+//    ]
+//  }
+// }
 
 
 // TODO: Options (i.e. initial coinholders, min end block height, parameters)
@@ -37,34 +41,6 @@ function polls () {
 
   const minBlockDuration = 500;
   const defaultMinAnswers = 2;
-
-  // State in words:
-  // - pubkey -> balance
-  // - active polls (current votes, end time)
-  // - inactive polls (results)
-
-  // State schema
-  // {
-  //  balances: {pubkey}
-  //  activePolls: {
-  //    questionHash: {
-  //      startBlock
-  //      endBlock
-  //      question
-  //      answers: {answer: [sorted_pubkeys]}
-  //   }
-  //  }
-  //  inactivePolls: {
-  //    [
-  //      {
-  //        question
-  //        answers: {answer: [sorted_pubkeys]}
-  //        startBlock
-  //        endBlock
-  //      }
-  //    ]
-  //  }
-  // }
 
   // Create TX Schema
   // question
@@ -77,7 +53,7 @@ function polls () {
   // TODO: tests!
   function createHandler(state, tx, chain) {
     let pubkey = tx.creatorPubkey;
-    let txHash = txHash(tx);
+    let txHash = getTxHash(tx);
 
     // Validate signature
     if (!verifyTx(txHash, pubkey, tx.signature)) {
