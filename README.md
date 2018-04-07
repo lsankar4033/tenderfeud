@@ -40,16 +40,17 @@ Blockchain tech:
   - ~~create, poll query handlers~~
   - block handler
     - ~~inactivate old polls~~
-    - handle payouts
-      - revisit and fix payout logic for poll creation...
-  - methods for querying poll state, account balance
+    - ~~handle payouts~~
+      - ~~revisit and fix payout logic for poll creation...~~
+  - ~~methods for querying poll state, account balance~~
 - deploy v0.1 to cloud w/webapp
 - increase validator cluster size
 - build v0.2, dynamic validators
   - i.e. a mechanism for anyone to be a validator
 
 Web tech:
-TODO
+- ~~simple web frontend for viewing/voting on polls~~
+- styling
 
 Users:
 - Think of initial poll questions
