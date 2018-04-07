@@ -22,7 +22,7 @@ async function main () {
   tx.signature = getSignature(sigHash, priv)
 
 	// 1) margarita: vote bitcoin
-  let res = await post('http://localhost:3000/txs', tx)
+  let res = await post('http://localhost:3001/txs', tx)
   console.log(res.data)
   
   tx = {
@@ -37,7 +37,7 @@ async function main () {
   tx.signature = getSignature(sigHash, priv2)
 
 	// 2) lakshman: vote bitcoin
-  res = await post('http://localhost:3000/txs', tx)
+  res = await post('http://localhost:3001/txs', tx)
   console.log(res.data)
   
   tx = {
@@ -52,7 +52,7 @@ async function main () {
   tx.signature = getSignature(sigHash, priv2)
 
 	// 3) lakshman: vote ether
-  res = await post('http://localhost:3000/txs', tx)
+  res = await post('http://localhost:3001/txs', tx)
   console.log(res.data)
   
 }

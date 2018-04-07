@@ -5,6 +5,7 @@ module.exports = {
   modules: [
   // Simple usage
    'nuxt-buefy',
+   '@nuxtjs/axios',
   ],
   head: {
     title: 'feud',

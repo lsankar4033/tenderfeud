@@ -56,6 +56,12 @@ const createStore = () => {
         }
       },
     },
+    actions: {
+      async getPolls ({ commit }) {
+        const polls = await this.$axios.$get('http://localhost:3001/state')
+        commit('get_polls', polls)
+      }
+    },
     mutations: {
       increment (state) {
         state.currentBlock++
@@ -64,6 +70,9 @@ const createStore = () => {
         const poll = state.polls[payload.pollNum]
         poll.userVote = payload.option
         poll.status = 'voteReceived'
+      },
+      get_polls (state, polls) {
+        console.log(polls)
       }
     }
   })

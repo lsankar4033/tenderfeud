@@ -20,7 +20,7 @@ async function main () {
   let sigHash = getTxHash(tx)
   tx.signature = getSignature(sigHash, priv)
 
-  let res = await post('http://localhost:3000/txs', tx)
+  let res = await post('http://localhost:3001/txs', tx)
   console.log(res.data)
 }
 main()

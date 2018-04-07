@@ -3,6 +3,7 @@
     <vote-card :poll="firstPoll" />
   <template>
     <button @click="$store.commit('increment')">Mine Block</button>
+    <button @click="$store.dispatch('getPolls')">Axios</button>
   </template>
   </section>
 </template>
