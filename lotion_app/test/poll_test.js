@@ -9,6 +9,19 @@ function buildVoteTx(txOpts, privkey) {
   return txOpts;
 }
 
+const defaultQuestion = "who's the fairest crypto of them all?";
+const defaultQHash = sha256(defaultQuestion);
+
+function buildPoll(opts = {}, answers = {}) {
+  return {
+    startBlock: opts['startBlock'] || 10,
+    endBlock: opts['endBlock'] || 10,
+    minAnswers: opts['minAnswers'] || 10,
+    question: opts['question'] || defaultQuestion,
+    answers: answers
+  }
+}
+
 describe('VoteHandler', function() {
 
   // TODO: all appropriate validations
@@ -57,7 +70,7 @@ describe('VoteHandler', function() {
     assert.equal(answerVotes.length, 3);
     assert.equal(answerVotes[2], address);
   });
-  
+
   it('should add new answer the relevant vote by address/poll', () => {
     let question = 'who is vitalik?';
     let questionHash = sha256(question)
@@ -100,7 +113,7 @@ describe('VoteHandler', function() {
     assert.equal(answerVotes.length, 1);
     assert.equal(answerVotes[0], address);
   });
-  
+
   it('should throw error on invalid poll question', () => {
     let question = 'who is vitalik?';
     let questionHash = sha256(question)
@@ -177,19 +190,6 @@ describe('VoteHandler', function() {
   });
 
 });
-
-const defaultQuestion = "who's the fairest crypto of them all?";
-const defaultQHash = sha256(defaultQuestion);
-
-function buildPoll(opts = {}, answers = {}) {
-  return {
-    startBlock: opts['startBlock'] || 10,
-    endBlock: opts['endBlock'] || 10,
-    minAnswers: opts['minAnswers'] || 10,
-    question: opts['question'] || defaultQuestion,
-    answers: answers
-  }
-}
 
 describe('BlockHandler', () => {
 
