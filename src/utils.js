@@ -3,7 +3,7 @@ let secp256k1 = require('secp256k1')
 
 let { stringify } = require('lotion/lib/json.js')
 
-function signTx(txHash, privkey) {
+function getSignature(txHash, privkey) {
   let sigObj = secp256k1.sign(txHash, privkey)
   return sigObj.signature;
 }

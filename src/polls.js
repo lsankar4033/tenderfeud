@@ -23,6 +23,29 @@ let { verifyTx, sha256, getTxHash } = require('./utils.js');
 //  }
 // }
 
+function voteHandler(state, tx, chain) {
+  let pubkey = tx.voterPubkey;
+  let txHash = getTxHash(tx);
+
+  // Validate signature
+  if (!verifyTx(txHash, pubkey, tx.signature)) {
+    throw Error('Signature does not match public key!')
+  }
+
+  let questionHash = sha256(tx.question)
+  if (questionHash in state.activePolls) {
+    throw Error('Poll is invalid or inactive')
+  }
+
+  let poll = state.activePolls[questionHash]
+
+  if (tx.answer in poll.answers) {
+    poll.answers[tx.answer].push(tx.voterAddress)
+  } else {
+    answer = { tx.answer : [tx.voterAddress] }
+    poll.answers.push(answer)
+  }
+}
 
 function createHandler(state, tx, chain) {
   // Create TX Schema
@@ -64,7 +87,6 @@ function createHandler(state, tx, chain) {
     throw Error(`Can't create a poll idential to a currently active poll!`);
   }
 
-  // TODO: Perhaps extract into own method for cleanliness
   let endBlock = chain.height + tx.endBlockHeight
   state.activePolls[questionHash] = {
     startBlock: tx.startBlock,
@@ -95,6 +117,8 @@ function polls (opts) {
     txHandler: (state, tx, chain) => {
       if (tx.type === 'create') {
         createHandler(state, tx, chain);
+      } else if (tx.type == 'vote') {
+        voteHandler(state, tx, chain);
       } else {
         throw Error(`Unsupported tx type: ${tx}`);
       }
