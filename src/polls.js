@@ -8,16 +8,18 @@ let { verifyTx, sha256, getTxHash, pubkeyToAddress, clone } = require('./utils.j
 //      startBlock
 //      endBlock
 //      question
+//      minAnswers
 //      answers: {answer: [sorted_addresses]}
 //   }
 //  }
 //  inactivePolls: {
 //    [
 //      {
-//        question
-//        answers: {answer: [sorted_addresses]}
-//        startBlock
-//        endBlock
+//      startBlock
+//      endBlock
+//      question
+//      minAnswers
+//      answers: {answer: [sorted_addresses]}
 //      }
 //    ]
 //  }
@@ -114,11 +116,13 @@ function createHandler(state, tx, chain) {
     startBlock: tx.startBlock,
     endBlock: tx.endBlock,
     question: tx.question,
+    minAnswers: minAnswers,
     answers: {}
   }
 }
 
-
+// TODO: Actually distribute payout...
+// Also, if minAnswers not met don't transfer!
 function blockHandler(state, chain) {
   let height = chain.height;
   console.log(`Created block at height: ${height}`);
