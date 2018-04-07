@@ -131,8 +131,8 @@ function createHandler(state, tx, chain) {
 
 // NOTE: Return address -> payout
 function getAddressToPayout(poll) {
-  let distinctAnswers = Object.keys(poll.answers);
-  if (distinctAnswers < poll.minAnswers) {
+  let answers = poll.answers;
+  if (answers.length < poll.minAnswers) {
     return {}
   } else {
 
@@ -160,25 +160,18 @@ function blockHandler(state, chain) {
       toRemove.push(questionHash);
 
       let addressToPayout = getAddressToPayout(poll);
-      for (var address of addressToPayout) {
+      for (var address in addressToPayout) {
         state.balances[address] |= 0;
         state.balances[address] += addressToPayout[address];
       }
 
-      // TODO: Perhaps add payouts to inactive poll
-    }
-
-    if (height >= poll.endBlock) {
-      let clonedPoll = clone(poll);
-      state.inactivePolls.push(clonedPoll);
-      questionsToRemove.push(questionHash);
-
       console.log(`Removing poll with question: ${poll.question} and end block: ${poll.endBlock}`);
+      // TODO: Perhaps add payouts to inactive poll
     }
   }
 
   // delete all inactivated polls from active polls
-  for (var questionHash in toRemove) {
+  for (var questionHash of toRemove) {
     delete state.activePolls[questionHash];
   }
 }
