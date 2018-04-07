@@ -43,7 +43,8 @@ function voteHandler(state, tx, chain) {
   if (tx.answer in poll.answers) {
     poll.answers[tx.answer].push(voterAddress)
   } else {
-    answer = { tx.answer : [tvoterAddress] }
+  	let ans = tx.answer
+    answer = { ans : [tvoterAddress] }
     poll.answers.push(answer)
   }
 }
