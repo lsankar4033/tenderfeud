@@ -26,6 +26,10 @@ function pubkeyToAddress(pubkey) {
   return base58check.encode(hash)
 }
 
+function privkeyToPubkey(privkey) {
+  return secp256k1.publicKeyCreate(privkey);
+}
+
 function clone (obj) {
   return JSON.parse(JSON.stringify(obj))
 }
@@ -42,6 +46,7 @@ function getTxHash(tx) {
 module.exports = {
   verifyTx,
   pubkeyToAddress,
+  privkeyToPubkey,
   getSignature,
   sha256,
   getTxHash
