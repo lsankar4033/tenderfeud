@@ -128,7 +128,7 @@ function createHandler(state, tx, chain) {
     endBlock: tx.endBlock,
     question: tx.question,
     minAnswers: minAnswers,
-    payout: tx.payout;
+    payout: tx.payout,
     answers: {}
   }
 }
@@ -170,6 +170,7 @@ function pollToPayouts(poll) {
 function blockHandler(state, chain) {
   let height = chain.height;
   console.log(`Created block at height: ${height}`);
+  state.blockHeight = height
 
   // check all active polls. if height >= endBlock, move to inactive polls
   let toRemove = []
