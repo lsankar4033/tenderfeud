@@ -92,9 +92,26 @@ function createHandler(state, tx, chain) {
     throw Error(`Signature does not match public key!`)
   }
 
+  // Make sure poll doesn't already exist
+  let creatorSum = 0
+  let questionHash = sha256(tx.question)
+  let found = 0
+  for (q in state.activePolls) {
+  	if (q == questionHash) {
+  		found = 1
+    }
+    if (q.creator == address) {
+    	creatorSum += q.payout
+    }
+  }
+
+  if (found == 1) {
+  	throw Error(`Can't create a poll idential to a currently active poll!`);
+  }
+
   // Validate balance
   let creatorBalance = state.balances[address] || 0;
-  if (creatorBalance < tx.payout) {
+  if (creatorBalance < tx.payout || (creatorBalance - creatorSum - tx.payout) >= 0) {
     throw Error(`Creator's balance of ${creatorBalance} not enough to pay payout ${tx.payout}`);
   }
 
@@ -109,19 +126,6 @@ function createHandler(state, tx, chain) {
     throw Error(`Must specify min answers > 2`);
   }
 
-  // Make sure poll doesn't already exist
-  let questionHash = sha256(tx.question)
-  let found = 0
-  for (q in state.activePolls) {
-  	if (q == questionHash) {
-  		found = 1
-    }
-  }
-
-  if (found == 1) {
-  	throw Error(`Can't create a poll idential to a currently active poll!`);
-  }
-
   let endBlock = chain.height + tx.endBlockHeight
   state.activePolls[questionHash] = {
     startBlock: tx.startBlock,
@@ -129,6 +133,7 @@ function createHandler(state, tx, chain) {
     question: tx.question,
     minAnswers: minAnswers,
     payout: tx.payout,
+    creator: address,
     answers: {}
   }
 }
