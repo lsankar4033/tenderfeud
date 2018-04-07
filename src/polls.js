@@ -2,20 +2,20 @@ let { verifyTx, sha256, getTxHash } = require('./utils.js');
 
 // State schema
 // {
-//  balances: {pubkey}
+//  balances: {address: balance}
 //  activePolls: {
 //    questionHash: {
 //      startBlock
 //      endBlock
 //      question
-//      answers: {answer: [sorted_pubkeys]}
+//      answers: {answer: [sorted_addresses]}
 //   }
 //  }
 //  inactivePolls: {
 //    [
 //      {
 //        question
-//        answers: {answer: [sorted_pubkeys]}
+//        answers: {answer: [sorted_addresses]}
 //        startBlock
 //        endBlock
 //      }
@@ -57,6 +57,7 @@ function createHandler(state, tx, chain) {
   // (optional) minAnswers
 
   let pubkey = tx.creatorPubkey;
+  let address = pubkeyToAddress(pubkey);
   let txHash = getTxHash(tx);
 
   // Validate signature
@@ -65,7 +66,7 @@ function createHandler(state, tx, chain) {
   }
 
   // Validate balance
-  let creatorBalance = state.balances[pubkey] || 0;
+  let creatorBalance = state.balances[address] || 0;
   if (creatorBalance < tx.payout) {
     throw Error(`Creator's balance of ${creatorBalance} not enough to pay payout ${tx.payout}`);
   }
