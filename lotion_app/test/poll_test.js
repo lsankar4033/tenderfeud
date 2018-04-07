@@ -80,7 +80,7 @@ describe('CreateHandler', function() {
     let pubkey = privkeyToPubkey(privkey);
     let address = pubkeyToAddress(pubkey);
 
-    let activePoll = buildPoll({ creator :  address},
+    let activePoll = buildPoll({creator:  address, payout: 10},
     	{
         'my boi': ['craig wright']
       })
@@ -351,7 +351,6 @@ describe('BlockHandler', () => {
       assert.equal(newBalances['2'] > newBalances['3'], true);
       assert.equal(newBalances['1'] + newBalances['2'] + newBalances['3'], 10);
     });
-
 
   });
 
