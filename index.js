@@ -1,7 +1,7 @@
 let lotion = require('lotion');
 
 // TODO: Pass in opts
-let polls = require('./src/polls')({});
+let polls = require('./src/polls').polls({});
 
 const pollInitialState = {
   balances: {
