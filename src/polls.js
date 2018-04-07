@@ -1,4 +1,4 @@
-let { verifyTx, sha256, getTxHash, pubkeyToAddress } = require('./utils.js');
+let { verifyTx, sha256, getTxHash, pubkeyToAddress, clone } = require('./utils.js');
 
 // State schema
 // {
@@ -59,7 +59,7 @@ function voteHandler(state, tx, chain) {
 
 const minBlockDuration = 500;
 const defaultMinAnswers = 2;
-  
+
 function createHandler(state, tx, chain) {
   // Create TX Schema
   // question
@@ -68,7 +68,6 @@ function createHandler(state, tx, chain) {
   // creatorPubkey
   // txSignature (signed by creator privkey)
   // (optional) minAnswers
-  console.log(state)
 
   let pubkey = tx.creatorPubkey;
   let address = pubkeyToAddress(pubkey);
@@ -105,7 +104,7 @@ function createHandler(state, tx, chain) {
   		found = 1
     }
   }
-  
+
   if (found == 1) {
   	throw Error(`Can't create a poll idential to a currently active poll!`);
   }
@@ -121,7 +120,27 @@ function createHandler(state, tx, chain) {
 
 
 function blockHandler(state, chain) {
-  // TODO: Implement!
+  let height = chain.height;
+  console.log(`Created block at height: ${height}`);
+
+  // check all active polls. if height >= endBlock, move to inactive polls
+  let questionsToRemove = []
+  for (var questionHash in state.activePolls) {
+    let poll = state.activePolls[questionHash]
+
+    if (height >= poll.endBlock) {
+      let clonedPoll = clone(poll);
+      state.inactivePolls.push(clonedPoll);
+      questionsToRemove.push(questionHash);
+
+      console.log(`Removing poll with question: ${poll.question} and end block: ${poll.endBlock}`);
+    }
+  }
+
+  // delete all inactivated polls from active polls
+  for (var questionHash in questionsToRemove) {
+    delete state.activePolls[questionHash];
+  }
 }
 
 // TODO: Options (i.e. initial coinholders, min end block height, parameters)
