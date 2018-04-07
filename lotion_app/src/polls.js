@@ -129,19 +129,34 @@ function createHandler(state, tx, chain) {
   }
 }
 
+function winnersToPayouts(sortedWinners, totalPayout) {
+  // TODO
+}
+
+function getBestAnswers(answers) {
+  // TODO
+}
+
 // NOTE: Return address -> payout
-function getAddressToPayout(poll) {
+function pollToPayouts(poll) {
   let answers = poll.answers;
-  if (answers.length < poll.minAnswers) {
+
+  // No winners if not enough distinct answers
+  if (Object.keys(answers).length < poll.minAnswers) {
     return {}
-  } else {
+  }
 
-    // TODO: If there's a tie, return {}
-    // else, exponential decay across sorted answers
+  else {
+    let bestAnswers = getBestAnswers(answers);
 
-    // Perhaps store a string in map saying *why* we didn't pay out
+    // No winners if there's  atie
+    if (bestAnswers.length > 1) {
+      return {};
+    } else {
+      let bestAnswer = bestAnswers[0];
 
-
+      return winnersToPayouts(answers[bestAnswer], poll.payout);
+    }
   }
 }
 
@@ -159,14 +174,11 @@ function blockHandler(state, chain) {
       state.inactivePolls.push(clonedPoll);
       toRemove.push(questionHash);
 
-      let addressToPayout = getAddressToPayout(poll);
+      let addressToPayout = pollToPayouts(poll);
       for (var address in addressToPayout) {
         state.balances[address] |= 0;
         state.balances[address] += addressToPayout[address];
       }
-
-      console.log(`Removing poll with question: ${poll.question} and end block: ${poll.endBlock}`);
-      // TODO: Perhaps add payouts to inactive poll
     }
   }
 
