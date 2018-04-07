@@ -19,108 +19,9 @@ function buildPoll(opts = {}, answers = {}) {
     minAnswers: opts['minAnswers'] || 10,
     question: opts['question'] || defaultQuestion,
     payout: opts['payout'] || 10,
-    creator: opts['creator'] || "",
     answers: answers
   }
 }
-
-describe('CreateHandler', function() {
-  it('should throw error on existing active poll question', () => {
-  	let polls = require('../src/polls')({});
-
-    let activePoll = buildPoll({},
-    	{
-        'my boi': ['craig wright']
-      })
-
-    let state = {
-      balances: {
-        'foo': 100
-      },
-      activePolls: {
-        [defaultQHash]: activePoll
-      }
-    };
-
-    let privkey = sha256('satoshi');
-    let pubkey = privkeyToPubkey(privkey);
-    let address = pubkeyToAddress(pubkey);
-
-  	let tx = {
-    	type: "create",
-    	question: defaultQuestion,
-    	endBlock: 500,
-    	startBlock: 10,
-			payout: 10,
-			creatorPubkey: pubkey,
-    	creator: address,
-  	}
-  	
-  	let sigHash = getTxHash(tx)
-  	tx.signature = getSignature(sigHash, privkey)
-
-    let chain = {};
-
-		let expError = "Can't create a poll idential to a currently active poll!"
-		var error;
-		try {
-  		polls.txHandler(state, tx, chain)
-		} catch (e) {
-  		error = e;
-		}
-    assert.equal(error.message, expError)
-
-  });
-  
-    it('should throw error on insufficient funds', () => {
-  	let polls = require('../src/polls')({});
-  	
-  	let privkey = sha256('satoshi');
-    let pubkey = privkeyToPubkey(privkey);
-    let address = pubkeyToAddress(pubkey);
-
-    let activePoll = buildPoll({ creator :  address},
-    	{
-        'my boi': ['craig wright']
-      })
-
-    let state = {
-      balances: {
-        [address] : 12
-      },
-      activePolls: {
-        [defaultQHash]: activePoll
-      }
-    };
-
-  	let tx = {
-    	type: "create",
-    	question: "another q",
-    	endBlock: 500,
-    	startBlock: 10,
-			payout: 10,
-			creatorPubkey: pubkey,
-    	creator: address,
-  	}
-  	
-  	let sigHash = getTxHash(tx)
-  	tx.signature = getSignature(sigHash, privkey)
-
-    let chain = {};
-
-		let expError = "not enough to pay payout"
-		var error;
-		try {
-  		polls.txHandler(state, tx, chain)
-		} catch (e) {
-  		error = e;
-		}
-
-    assert.notEqual(error.message.indexOf(expError), -1)
-
-  });
-});
-
 
 describe('VoteHandler', function() {
 
@@ -282,24 +183,15 @@ describe('BlockHandler', () => {
       activePolls: {
         [defaultQHash]: poll
       },
-      inactivePolls: [],
-      blockHeight: 3
+      inactivePolls: []
     }
     let mutableState = clone(initState);
 
     polls.blockHandler(mutableState, {height: 3})
     assert.deepStrictEqual(mutableState, initState);
 
-		initState = {
-      activePolls: {
-        [defaultQHash]: poll
-      },
-      inactivePolls: [],
-      blockHeight: 5
-    }
-    mutableState = clone(initState);
     polls.blockHandler(mutableState, {height: 5});
-    assert.deepStrictEqual(mutableState, {activePolls: {}, inactivePolls: [poll], blockHeight: 5});
+    assert.deepStrictEqual(mutableState, {activePolls: {}, inactivePolls: [poll]});
   });
 
   describe('payouts', () => {
@@ -347,6 +239,4 @@ describe('BlockHandler', () => {
 
 
   });
-
-
 });
