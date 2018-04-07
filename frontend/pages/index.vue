@@ -1,9 +1,20 @@
 <template>
   <section class="container">
-    <vote-card :poll="firstPoll" />
-  <template>
+    Active Polls
+    <div v-for="activePoll in activePolls" :key="activePoll.question">
+      <vote-card :poll="activePoll" />
+    </div>
+    <br />
+    Inactive Polls
+    <div v-for="inactivePoll in inactivePolls" :key="inactivePoll.question">
+      <vote-card :poll="inactivePoll" />
+    </div>
+  <template class="extra">
+    {{ blockchain }}
+    {{ activePolls }}
+    {{ inactivePolls }}
     <button @click="$store.commit('increment')">Mine Block</button>
-    <button @click="$store.dispatch('getPolls')">Axios</button>
+    <button @click="$store.dispatch('getBlockchain')">Axios</button>
   </template>
   </section>
 </template>
@@ -19,41 +30,46 @@ export default {
       
     }
   },
+  mounted() {
+    this.getBlockchain()
+  },
+  methods: {
+    getBlockchain() {
+      setTimeout(() => {
+        this.$store.dispatch('getBlockchain')
+        this.getBlockchain()
+      }, 1000)
+    }
+  },
   computed: {
+    blockchain() {
+      return this.$store.state.blockChain.blockHeight
+    },
     firstPoll() {
       return this.$store.state.polls[0]
-    }
+    },
+    activePolls() {
+      let result = []
+      for (let i = 0; i < this.$store.state.activePollIds.length; i++) {
+        const id = this.$store.state.activePollIds[i]
+        result.push(this.$store.state.activePolls[id])
+      }
+      return result
+    },
+    inactivePolls() {
+      let result = []
+      for (let i = 0; i < this.$store.state.inactivePollIds.length; i++) {
+        const id = this.$store.state.inactivePollIds[i]
+        result.push(this.$store.state.inactivePolls[id])
+      }
+      return result
+    },
   }
 }
 </script>
 
 <style>
-.container {
-  min-height: 100vh;
+.extra {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
 }
 </style>

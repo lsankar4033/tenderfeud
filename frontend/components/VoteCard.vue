@@ -2,14 +2,14 @@
   <div>
     <div class="box">
       <template v-if="status === 'getInput'">
-        <span>#{{ poll.number }}</span>
-        <h1>{{ poll.title }}</h1>
+        <span>${{ poll.payout }}</span>
+        <h1>{{ poll.question }}</h1>
         <div class="flex-container">
-          <div v-for="option in poll.options" :key="option.text">
+          <div v-for="answer in answers" :key="answer.text">
             <div class="options">
-              <button @click="vote(option)" class="button">{{ option.text }}</button>
+              <button @click="vote(answer)" class="button">{{ answer.text }}</button>
               <div class="vote-container">
-                <span class="num-votes">{{ option.votes }}</span>
+                <span class="num-votes">{{ answer.votes }}</span>
               </div>
             </div>
           </div>
@@ -48,8 +48,16 @@ export default {
     }
   },
   computed: {
-    pollStatus() {
-      return this.poll.status
+    answers() {
+      let result = []
+      const options = Object.keys(this.poll.answers)
+      for(let i = 0; i < options.length; i++) {
+        result.push({
+          text: options[i],
+          votes: this.poll.answers[options[i]].length
+        })
+      }
+      return result
     }
   },
   methods: {
@@ -93,9 +101,9 @@ footer {
   position: absolute;
   color: white;
   background: red;
-  padding: 2px;
-  border-radius: 15px;
-  transform: translate(-14px, -20px)
+  padding: 2px 5px;
+  border-radius: 50%;
+  transform: translate(-14px, -28px)
 }
 .spinner {
   width: 40px;

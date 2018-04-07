@@ -3,7 +3,12 @@ import Vuex from 'vuex'
 const createStore = () => {
   return new Vuex.Store({
     state: {
-      currentBlock: 4,
+      blockChain: {},
+      blockChainPollIds: [],
+      activePollIds: [],
+      inactivePollIds: [],
+      activePolls: {},
+      inactivePolls: {},
       blocks: [
         {
           number: 1,
@@ -57,9 +62,9 @@ const createStore = () => {
       },
     },
     actions: {
-      async getPolls ({ commit }) {
-        const polls = await this.$axios.$get('http://localhost:3001/state')
-        commit('get_polls', polls)
+      async getBlockchain ({ commit }) {
+        const blockchain = await this.$axios.$get('http://localhost:3001/state')
+        commit('get_blockchain', blockchain)
       }
     },
     mutations: {
@@ -71,8 +76,23 @@ const createStore = () => {
         poll.userVote = payload.option
         poll.status = 'voteReceived'
       },
-      get_polls (state, polls) {
-        console.log(polls)
+      get_blockchain (state, blockchain) {
+        state.blockChain = blockchain
+        // state.blockHeight = blockchain.blockHeight
+        state.activePollIds = Object.keys(blockchain.activePolls)
+        state.inactivePollIds = Object.keys(blockchain.inactivePolls)
+        let activePolls = {}
+        let inactivePolls = {}
+        for (let i = 0; i < state.activePollIds.length; i++) {
+          const activePoll = blockchain.activePolls[state.activePollIds[i]]
+          activePolls[state.activePollIds[i]] = activePoll
+        }
+        for (let i = 0; i < state.inactivePollIds.length; i++) {
+          const inactivePoll = blockchain.inactivePolls[state.inactivePollIds[i]]
+          inactivePolls[state.inactivePollIds[i]] = inactivePoll
+        }
+        state.activePolls = Object.assign({}, activePolls)
+        state.inactivePolls = Object.assign({}, inactivePolls)
       }
     }
   })

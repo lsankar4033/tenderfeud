@@ -42,8 +42,8 @@ export default {
 }
 .block {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 14px;
+  height: 14px;
   padding: 5px;
   margin: 2px;
   border: 1px solid black;
