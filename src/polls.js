@@ -121,16 +121,44 @@ function createHandler(state, tx, chain) {
   }
 }
 
-// TODO: Actually distribute payout...
-// Also, if minAnswers not met don't transfer!
+// NOTE: Return address -> payout
+function getAddressToPayout(poll) {
+  let distinctAnswers = Object.keys(poll.answers);
+  if (distinctAnswers < poll.minAnswers) {
+    return {}
+  } else {
+
+    // TODO: If there's a tie, return {}
+    // else, exponential decay across sorted answers
+
+    // Perhaps store a string in map saying *why* we didn't pay out
+
+
+  }
+}
+
 function blockHandler(state, chain) {
   let height = chain.height;
   console.log(`Created block at height: ${height}`);
 
   // check all active polls. if height >= endBlock, move to inactive polls
-  let questionsToRemove = []
+  let toRemove = []
   for (var questionHash in state.activePolls) {
     let poll = state.activePolls[questionHash]
+
+    if (height >= poll.endBlock) {
+      let clonedPoll = clone(poll);
+      state.inactivePolls.push(clonedPoll);
+      toRemove.push(questionHash);
+
+      let addressToPayout = getAddressToPayout(poll);
+      for (var address of addressToPayout) {
+        state.balances[address] |= 0;
+        state.balances[address] += addressToPayout[address];
+      }
+
+      // TODO: Perhaps add payouts to inactive poll
+    }
 
     if (height >= poll.endBlock) {
       let clonedPoll = clone(poll);
@@ -142,7 +170,7 @@ function blockHandler(state, chain) {
   }
 
   // delete all inactivated polls from active polls
-  for (var questionHash in questionsToRemove) {
+  for (var questionHash in toRemove) {
     delete state.activePolls[questionHash];
   }
 }
