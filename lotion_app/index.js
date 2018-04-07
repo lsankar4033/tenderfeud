@@ -1,3 +1,5 @@
+"use strict";
+
 let lotion = require('lotion');
 
 // TODO: Pass in opts
