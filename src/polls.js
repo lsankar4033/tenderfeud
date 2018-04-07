@@ -105,7 +105,7 @@ function blockHandler(state, chain) {
 }
 
 // TODO: Options (i.e. initial coinholders, min end block height, parameters)
-function polls (opts) {
+module.exports = (opts) => {
   const minBlockDuration = 500;
   const defaultMinAnswers = 2;
 
@@ -123,8 +123,4 @@ function polls (opts) {
     blockHandler: blockHandler
 
   }
-}
-
-module.exports = {
-  polls
 }
