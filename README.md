@@ -37,14 +37,15 @@ To reward earlier voters of an option, exponential decay on payouts for the righ
 Blockchain tech:
 - build v0.1, static validator set
 - deploy v0.1 to cloud w/webapp potentially
-- build v0.2, dynamic validators (optional)
+- build v0.2, dynamic validators
+  - i.e. a mechanism for anyone to be a validator
 
 Web tech:
 TODO
 
 Users:
-- Decide on some saucy initial polls
-- Make friends with 10 ppl who could be early users of what we make
+- Think of initial poll questions
+(INSERT MORE GROWTH HACKS)
 
-Comp:
+Presentation:
 - presentation
