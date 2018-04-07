@@ -41,6 +41,8 @@ function getTxHash(tx) {
 
 module.exports = {
   verifyTx,
+  pubkeyToAddress,
+  getSignature,
   sha256,
   getTxHash
 }
