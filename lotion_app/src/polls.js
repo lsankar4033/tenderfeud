@@ -139,15 +139,34 @@ function createHandler(state, tx, chain) {
   }
 }
 
+// Exponential decay by sort order of payout
 function winnersToPayouts(sortedWinners, totalPayout) {
-  // TODO
+
   return {}
 }
 
 // Gets all answers tied for the most votes
 function getBestAnswers(answers) {
+  let answerCountTuples = Object.entries(answers).map( (e) => [e[0], e[1].length] );
 
-  return [];
+  let highestCount = 0;
+  let countToAnswers = {}
+  for (tup of answerCountTuples) {
+    // NOTE: This pattern sucks
+    countToAnswers[tup[1]] = countToAnswers[tup[1]] || []
+    countToAnswers[tup[1]].push(tup[0]);
+
+    if (tup[1] > highestCount) {
+      highestCount = tup[1];
+    }
+  }
+
+  // NOTE: Should never happen!
+  if (highestCount == 0) {
+    return [];
+  }
+
+  return countToAnswers[highestCount];
 }
 
 // NOTE: Return address -> payout
@@ -189,10 +208,11 @@ function blockHandler(state, chain) {
       toRemove.push(questionHash);
 
       let addressToPayout = pollToPayouts(poll);
-      for (var address in addressToPayout) {
-        state.balances[address] |= 0;
-        state.balances[address] += addressToPayout[address];
-      }
+      // TODO: Deduct poll creator
+      /*for (var address in addressToPayout) {*/
+        //state.balances[address] = state.balances[address] || 0;
+        //state.balances[address] += addressToPayout[address];
+      /*}*/
     }
   }
 

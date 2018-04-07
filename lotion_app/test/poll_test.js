@@ -313,7 +313,7 @@ describe('BlockHandler', () => {
 
     });
 
-    it("pays winning answer out based on exp decay function applied to winners", () => {
+    it("pays from creator to winners based on winner vote order", () => {
       let polls = require('../src/polls')({});
 
       let poll = buildPoll(
