@@ -1,6 +1,6 @@
 Family Feud on tendermint.
 
-## Design overview
+## Mechanism design notes (nothing set in stone)
 Genesis block distributes tokens among some number of people (manual pre-sale among other attendees?).
 
 From that point, users can either create a poll, view existing polls, or submit a vote for an existing
@@ -17,16 +17,14 @@ To avoid the degenerate case of only *one* answer, we can set polls up to have a
 this minimum *isn't* met by the time the poll ends, the poll creator is refunded their payment. Maybe there's
 some default minimum, but we could also make this set-able by the poll creator.
 
-### Lotionjs implementation
+To reward earlier voters of an option, exponential decay on payouts for the right answer (or something).
 
-Create some cloud validators. Distribute code for running validators with these cloud validators hardcoded in
-as peers.
-
-Create webapp for non-validators to send transactions.
-
-Lotionjs app should:
-- process payment txes
-- process poll txes
+## Overall system design
+- lotionjs for nodes
+  - actions: createPoll, voteOnPoll, sendCoins
+  - queries: getPolls, getPollInfo, getBalance
+- static network of validators in the cloud
+- web frontend
 
 ## Open questions
 - ~~how does network work in lotionjs? i.e. how do we network multiple nodes on the same blockchain?~~
@@ -36,12 +34,13 @@ Lotionjs app should:
 - what's the right setting of parameters (payouts, etc.) that incentivize good behaviour?
 
 ## Tasks
-Tech:
+Blockchain tech:
 - build v0.1, static validator set
-  - (LS) build protocol for token genesis + transfer
-  - add on protocol for poll mgmt
 - deploy v0.1 to cloud w/webapp potentially
-- build v0.2, dynamic validators
+- build v0.2, dynamic validators (optional)
+
+Web tech:
+TODO
 
 Users:
 - Decide on some saucy initial polls
