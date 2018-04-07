@@ -9,6 +9,7 @@ const pollInitialState = {
     'Boo2q2fEGspWEVxoWiWu5bV4MRGZBL7ut': 5000  // priv = sha256('margarita')
   },
   activePolls: {}
+  inactivePolls: []
 }
 
 // TODO: Use the initial state defined on polls module

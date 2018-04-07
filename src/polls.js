@@ -1,4 +1,4 @@
-let { verifyTx, sha256, getTxHash, pubkeyToAddress } = require('./utils.js');
+let { verifyTx, sha256, getTxHash, pubkeyToAddress, clone } = require('./utils.js');
 
 // State schema
 // {
@@ -8,16 +8,18 @@ let { verifyTx, sha256, getTxHash, pubkeyToAddress } = require('./utils.js');
 //      startBlock
 //      endBlock
 //      question
+//      minAnswers
 //      answers: {answer: [sorted_addresses]}
 //   }
 //  }
 //  inactivePolls: {
 //    [
 //      {
-//        question
-//        answers: {answer: [sorted_addresses]}
-//        startBlock
-//        endBlock
+//      startBlock
+//      endBlock
+//      question
+//      minAnswers
+//      answers: {answer: [sorted_addresses]}
 //      }
 //    ]
 //  }
@@ -67,7 +69,7 @@ function voteHandler(state, tx, chain) {
 
 const minBlockDuration = 500;
 const defaultMinAnswers = 2;
-  
+
 function createHandler(state, tx, chain) {
   // Create TX Schema
   // question
@@ -112,7 +114,7 @@ function createHandler(state, tx, chain) {
   		found = 1
     }
   }
-  
+
   if (found == 1) {
   	throw Error(`Can't create a poll idential to a currently active poll!`);
   }
@@ -122,13 +124,63 @@ function createHandler(state, tx, chain) {
     startBlock: tx.startBlock,
     endBlock: tx.endBlock,
     question: tx.question,
+    minAnswers: minAnswers,
     answers: {}
   }
 }
 
+// NOTE: Return address -> payout
+function getAddressToPayout(poll) {
+  let distinctAnswers = Object.keys(poll.answers);
+  if (distinctAnswers < poll.minAnswers) {
+    return {}
+  } else {
+
+    // TODO: If there's a tie, return {}
+    // else, exponential decay across sorted answers
+
+    // Perhaps store a string in map saying *why* we didn't pay out
+
+
+  }
+}
 
 function blockHandler(state, chain) {
-  // TODO: Implement!
+  let height = chain.height;
+  console.log(`Created block at height: ${height}`);
+
+  // check all active polls. if height >= endBlock, move to inactive polls
+  let toRemove = []
+  for (var questionHash in state.activePolls) {
+    let poll = state.activePolls[questionHash]
+
+    if (height >= poll.endBlock) {
+      let clonedPoll = clone(poll);
+      state.inactivePolls.push(clonedPoll);
+      toRemove.push(questionHash);
+
+      let addressToPayout = getAddressToPayout(poll);
+      for (var address of addressToPayout) {
+        state.balances[address] |= 0;
+        state.balances[address] += addressToPayout[address];
+      }
+
+      // TODO: Perhaps add payouts to inactive poll
+    }
+
+    if (height >= poll.endBlock) {
+      let clonedPoll = clone(poll);
+      state.inactivePolls.push(clonedPoll);
+      questionsToRemove.push(questionHash);
+
+      console.log(`Removing poll with question: ${poll.question} and end block: ${poll.endBlock}`);
+    }
+  }
+
+  // delete all inactivated polls from active polls
+  for (var questionHash in toRemove) {
+    delete state.activePolls[questionHash];
+  }
 }
 
 // TODO: Options (i.e. initial coinholders, min end block height, parameters)
