@@ -8,7 +8,7 @@ const pollInitialState = {
     'Ld7g2n7HpdTagJSxyW5o5RLYbAsSqdXxb': 5000, // priv = sha256('lakshman')
     'Boo2q2fEGspWEVxoWiWu5bV4MRGZBL7ut': 5000  // priv = sha256('margarita')
   },
-  polls: {}
+  activePolls: {}
 }
 
 // TODO: Use the initial state defined on polls module

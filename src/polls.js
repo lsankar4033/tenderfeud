@@ -34,8 +34,16 @@ function voteHandler(state, tx, chain) {
   }
 
   let questionHash = sha256(tx.question)
-  if (questionHash in state.activePolls) {
-    throw Error('Poll is invalid or inactive')
+
+  let found = 0
+  for (q in state.activePolls) {
+  	if (q == questionHash) {
+  		found = 1
+    }
+  }
+
+  if (found == 0) {
+  	throw Error('Poll is invalid or inactive')
   }
 
   let poll = state.activePolls[questionHash]
@@ -90,8 +98,16 @@ function createHandler(state, tx, chain) {
 
   // Make sure poll doesn't already exist
   let questionHash = sha256(tx.question)
-  if (questionHash in state.activePolls) {
-    throw Error(`Can't create a poll idential to a currently active poll!`);
+  console.log(questionHash)
+  let found = 0
+  for (q in state.activePolls) {
+  	if (q == questionHash) {
+  		found = 1
+    }
+  }
+  
+  if (found == 1) {
+  	throw Error(`Can't create a poll idential to a currently active poll!`);
   }
 
   let endBlock = chain.height + tx.endBlockHeight
