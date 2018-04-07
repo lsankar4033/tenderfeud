@@ -22,14 +22,20 @@ const createStore = () => {
           transactions: [],
         }
       ],
-      polls:{
+      polls: {
         0: {
-          number: 12,
-          title: 'Do you prefer cats or dogs',
-          userVote: -1,
+          number: 0,
+          title: 'Do you prefer cats or dogs', //question
+          userVote: -1, 
           hash: '0x8943djfF32mfasdf',
           startBlock: 2,
           endBlock: 9,
+          // getInput
+          // verifyVote
+          // inputReceived
+          // pollComplete
+          status: 'getInput',
+          optionReference: '0x98498453hjkd',
           options: [
             {
               number: 0,
@@ -45,7 +51,7 @@ const createStore = () => {
             },
           ]
         },
-        1: {
+        '0x4323249dsisf': {
 
         }
       },
@@ -55,7 +61,9 @@ const createStore = () => {
         state.currentBlock++
       },
       vote (state, payload) {
-        state.polls[payload.pollNum].userVote = option
+        const poll = state.polls[payload.pollNum]
+        poll.userVote = payload.option
+        poll.status = 'voteReceived'
       }
     }
   })
