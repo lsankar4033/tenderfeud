@@ -10,7 +10,7 @@ function getSignature(txHash, privkey) {
 }
 
 function verifyTx(txHash, pubkey, sig) {
-  return secp256k1.verify(sigHash, signature, pubkey);
+  return secp256k1.verify(txHash, sig, pubkey);
 }
 
 function sha256(data) {
@@ -22,7 +22,7 @@ function ripemd160(data) {
 }
 
 function pubkeyToAddress(pubkey) {
-  let hash = ripemd160(sha256(data))
+  let hash = ripemd160(sha256(pubkey))
   return base58check.encode(hash)
 }
 

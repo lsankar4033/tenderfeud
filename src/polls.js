@@ -1,4 +1,4 @@
-let { verifyTx, sha256, getTxHash } = require('./utils.js');
+let { verifyTx, sha256, getTxHash, pubkeyToAddress } = require('./utils.js');
 
 // State schema
 // {
@@ -49,6 +49,9 @@ function voteHandler(state, tx, chain) {
   }
 }
 
+const minBlockDuration = 500;
+const defaultMinAnswers = 2;
+  
 function createHandler(state, tx, chain) {
   // Create TX Schema
   // question
@@ -57,6 +60,7 @@ function createHandler(state, tx, chain) {
   // creatorPubkey
   // txSignature (signed by creator privkey)
   // (optional) minAnswers
+  console.log(state)
 
   let pubkey = tx.creatorPubkey;
   let address = pubkeyToAddress(pubkey);
@@ -106,9 +110,6 @@ function blockHandler(state, chain) {
 
 // TODO: Options (i.e. initial coinholders, min end block height, parameters)
 module.exports = (opts) => {
-  const minBlockDuration = 500;
-  const defaultMinAnswers = 2;
-
   return {
     txHandler: (state, tx, chain) => {
       if (tx.type === 'create') {
