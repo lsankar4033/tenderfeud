@@ -1,4 +1,4 @@
-let { sha256, getTxHash, getSignature, privkeyToPubkey, pubkeyToAddress } = require('../src/utils.js');
+let { clone, sha256, getTxHash, getSignature, privkeyToPubkey, pubkeyToAddress } = require('../src/utils.js');
 let assert = require('assert');
 
 function buildVoteTx(txOpts, privkey) {
@@ -175,5 +175,45 @@ describe('VoteHandler', function() {
     assert.equal(error.message, expError)
 
   });
+
+});
+
+const defaultQuestion = "who's the fairest crypto of them all?";
+const defaultQHash = sha256(defaultQuestion);
+
+function buildPoll(opts = {}, answers = {}) {
+  return {
+    startBlock: opts['startBlock'] || 10,
+    endBlock: opts['endBlock'] || 10,
+    minAnswers: opts['minAnswers'] || 10,
+    question: opts['question'] || defaultQuestion,
+    answers: answers
+  }
+}
+
+describe('BlockHandler', () => {
+
+  it("should move an active poll to inactive iff the current block height exceeds the poll's endBlock", () => {
+    let polls = require('../src/polls')({});
+
+    let poll = buildPoll({endBlock: 5});
+    let initState = {
+      activePolls: {
+        [defaultQHash]: poll
+      },
+      inactivePolls: []
+    }
+    let mutableState = clone(initState);
+
+    polls.blockHandler(mutableState, {height: 3})
+    assert.deepStrictEqual(mutableState, initState);
+
+    polls.blockHandler(mutableState, {height: 5});
+    assert.deepStrictEqual(mutableState, {activePolls: {}, inactivePolls: [poll]});
+  });
+
+  // TODO: Test that payouts happen when they should
+
+
 
 });

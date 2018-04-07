@@ -141,6 +141,7 @@ function getAddressToPayout(poll) {
 
     // Perhaps store a string in map saying *why* we didn't pay out
 
+    return {}
 
   }
 }
@@ -151,7 +152,7 @@ function blockHandler(state, chain) {
 
   // check all active polls. if height >= endBlock, move to inactive polls
   let toRemove = []
-  for (var questionHash in state.activePolls) {
+  for (const questionHash in state.activePolls) {
     let poll = state.activePolls[questionHash]
 
     if (height >= poll.endBlock) {
@@ -159,26 +160,19 @@ function blockHandler(state, chain) {
       state.inactivePolls.push(clonedPoll);
       toRemove.push(questionHash);
 
-      let addressToPayout = getAddressToPayout(poll);
-      for (var address of addressToPayout) {
-        state.balances[address] |= 0;
-        state.balances[address] += addressToPayout[address];
-      }
-
-      // TODO: Perhaps add payouts to inactive poll
-    }
-
-    if (height >= poll.endBlock) {
-      let clonedPoll = clone(poll);
-      state.inactivePolls.push(clonedPoll);
-      questionsToRemove.push(questionHash);
-
       console.log(`Removing poll with question: ${poll.question} and end block: ${poll.endBlock}`);
+
+      // TODO:
+      /*let addressToPayout = getAddressToPayout(poll);*/
+      //for (var address of addressToPayout) {
+        //state.balances[address] |= 0;
+        //state.balances[address] += addressToPayout[address];
+      /*}*/
     }
   }
 
   // delete all inactivated polls from active polls
-  for (var questionHash in toRemove) {
+  for (var questionHash of toRemove) {
     delete state.activePolls[questionHash];
   }
 }
