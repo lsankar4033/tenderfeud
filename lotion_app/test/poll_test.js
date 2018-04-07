@@ -57,5 +57,85 @@ describe('VoteHandler', function() {
     assert.equal(answerVotes.length, 3);
     assert.equal(answerVotes[2], address);
   });
+  
+  it('should add new answer the relevant vote by address/poll', () => {
+    let question = 'who is vitalik?';
+    let questionHash = sha256(question)
+    let answer = 'just a friend';
+
+    let polls = require('../src/polls')({});
+
+    let state = {
+      balances: {
+        'foo': 100
+      },
+      activePolls: {
+        [questionHash]: {
+          startBlock: 10,
+          endBlock: 100,
+          question: question,
+          minAnswers: 100,
+          answers: {
+
+          }
+        }
+      }
+    };
+
+    let privkey = sha256('satoshi');
+    let pubkey = privkeyToPubkey(privkey);
+
+    let tx = buildVoteTx({
+      question: question,
+      voterPubkey: pubkey,
+      answer: answer
+    }, privkey);
+
+    let chain = {};
+
+    polls.txHandler(state, tx, chain);
+
+    let address = pubkeyToAddress(pubkey);
+    let answerVotes = state.activePolls[questionHash].answers[answer];
+    assert.equal(answerVotes.length, 1);
+    assert.equal(answerVotes[0], address);
+  });
+  
+  it('should throw error on invalid test', () => {
+    let question = 'who is vitalik?';
+    let questionHash = sha256(question)
+    let answer = 'just a friend';
+
+    let polls = require('../src/polls')({});
+
+    let state = {
+      balances: {
+        'foo': 100
+      },
+      activePolls: {
+
+      }
+    };
+
+    let privkey = sha256('satoshi');
+    let pubkey = privkeyToPubkey(privkey);
+
+    let tx = buildVoteTx({
+      question: question,
+      voterPubkey: pubkey,
+      answer: answer
+    }, privkey);
+
+    let chain = {};
+		let expError = "Poll is invalid or inactive"
+		var error;
+		try {
+  		polls.txHandler(state, tx, chain)
+		} catch (e) {
+  		error = e;
+		}
+    assert.equal(error.message, expError)
+
+  });
 
 });
