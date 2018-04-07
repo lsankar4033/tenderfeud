@@ -41,7 +41,7 @@ Blockchain tech:
   - block handler
     - ~~inactivate old polls~~
     - handle payouts
-  - tests for all handlers
+      - revisit and fix payout logic for poll creation...
   - methods for querying poll state, account balance
 - deploy v0.1 to cloud w/webapp
 - increase validator cluster size
