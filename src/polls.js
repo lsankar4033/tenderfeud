@@ -47,14 +47,22 @@ function voteHandler(state, tx, chain) {
   }
 
   let poll = state.activePolls[questionHash]
+  console.log(poll)
+  found = 0
+  for (a in poll.answers) {
+  	if (a == tx.answer) {
+  		found = 1
+    }
+  }
 
-  if (tx.answer in poll.answers) {
+  if (found == 1) {
     poll.answers[tx.answer].push(voterAddress)
   } else {
   	let ans = tx.answer
-    answer = { ans : [tvoterAddress] }
-    poll.answers.push(answer)
+    poll.answers[ans] = [voterAddress]
   }
+  console.log("new state at end of vote for " + tx.answer + ": " + poll.answers[tx.answer])
+
 }
 
 const minBlockDuration = 500;
@@ -68,7 +76,6 @@ function createHandler(state, tx, chain) {
   // creatorPubkey
   // txSignature (signed by creator privkey)
   // (optional) minAnswers
-  console.log(state)
 
   let pubkey = tx.creatorPubkey;
   let address = pubkeyToAddress(pubkey);

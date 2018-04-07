@@ -10,7 +10,8 @@ async function main () {
   let tx = {
     type: "create",
     question: "What is the best cryptocurrency?",
-    blockDuration: 500,
+    endBlock: 500,
+    startBlock: 10,
     payout: 10,
     creatorPubkey: pub,
   }
