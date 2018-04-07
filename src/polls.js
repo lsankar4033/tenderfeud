@@ -106,14 +106,7 @@ function polls (opts) {
   const minBlockDuration = 500;
   const defaultMinAnswers = 2;
 
-  const initialState = {
-    balances: {},
-    polls: {}
-  }
-
   return {
-    initialState: initialState,
-
     txHandler: (state, tx, chain) => {
       if (tx.type === 'create') {
         createHandler(state, tx, chain);
@@ -131,5 +124,4 @@ function polls (opts) {
 
 module.exports = {
   polls
-  initialState
 }
