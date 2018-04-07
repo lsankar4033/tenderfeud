@@ -26,6 +26,10 @@ function pubkeyToAddress(pubkey) {
   return base58check.encode(hash)
 }
 
+function clone (obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+
 // NOTE: This is used on client-side and app-side, so must now know about signature
 function getTxHash(tx) {
   tx = clone(tx)
