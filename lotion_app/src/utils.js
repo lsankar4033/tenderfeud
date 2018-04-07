@@ -44,6 +44,7 @@ function getTxHash(tx) {
 }
 
 module.exports = {
+  clone,
   verifyTx,
   pubkeyToAddress,
   privkeyToPubkey,

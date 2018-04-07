@@ -1,4 +1,4 @@
-let { sha256, getTxHash, getSignature, privkeyToPubkey, pubkeyToAddress } = require('../src/utils.js');
+let { sha256, clone, getTxHash, getSignature, privkeyToPubkey, pubkeyToAddress } = require('../src/utils.js');
 let assert = require('assert');
 
 function buildVoteTx(txOpts, privkey) {
@@ -7,6 +7,19 @@ function buildVoteTx(txOpts, privkey) {
   txOpts['signature'] = getSignature(txHash, privkey);
 
   return txOpts;
+}
+
+const defaultQuestion = "who's the fairest crypto of them all?";
+const defaultQHash = sha256(defaultQuestion);
+
+function buildPoll(opts = {}, answers = {}) {
+  return {
+    startBlock: opts['startBlock'] || 10,
+    endBlock: opts['endBlock'] || 10,
+    minAnswers: opts['minAnswers'] || 10,
+    question: opts['question'] || defaultQuestion,
+    answers: answers
+  }
 }
 
 describe('VoteHandler', function() {
@@ -18,7 +31,7 @@ describe('VoteHandler', function() {
   	let polls = require('../src/polls')({});
     let answer = 'bitcoin';
 
-    let activePoll = buildPoll({}, 
+    let activePoll = buildPoll({},
     	{
         [answer]: ['jae kwon', 'nick szabo'],
         'my boi': ['craig wright']
@@ -51,7 +64,7 @@ describe('VoteHandler', function() {
     assert.equal(answerVotes.length, 3);
     assert.equal(answerVotes[2], address);
   });
-  
+
   it('should add new answer the relevant vote by address/poll', () => {
     let polls = require('../src/polls')({});
     let answer = 'ether';
@@ -85,7 +98,7 @@ describe('VoteHandler', function() {
     assert.equal(answerVotes.length, 1);
     assert.equal(answerVotes[0], address);
   });
-  
+
   it('should throw error on invalid poll question', () => {
     let polls = require('../src/polls')({});
     let question = 'who is vitalik?';
@@ -155,6 +168,74 @@ describe('VoteHandler', function() {
   		error = e;
 		}
     assert.equal(error.message, expError)
+
+  });
+});
+
+describe('BlockHandler', () => {
+
+  it("should move an active poll to inactive iff the current block height exceeds the poll's endBlock", () => {
+    let polls = require('../src/polls')({});
+
+    let poll = buildPoll({endBlock: 5});
+    let initState = {
+      activePolls: {
+        [defaultQHash]: poll
+      },
+      inactivePolls: []
+    }
+    let mutableState = clone(initState);
+
+    polls.blockHandler(mutableState, {height: 3})
+    assert.deepStrictEqual(mutableState, initState);
+
+    polls.blockHandler(mutableState, {height: 5});
+    assert.deepStrictEqual(mutableState, {activePolls: {}, inactivePolls: [poll]});
+  });
+
+  describe('payouts', () => {
+
+    it("doesn't pay anyone out if fewer than required distinct answers", () => {
+
+    });
+
+    it("doesn't pay anyone out if multiple answers tied for top spot", () => {
+
+    });
+
+    it("pays winning answer out based on exp decay function applied to winners", () => {
+      let polls = require('../src/polls')({});
+
+      let poll = buildPoll(
+        {
+          endBlock: 5,
+          minAnswers: 2
+        },
+        {
+          'winning': ['1', '2', '3'],
+          'losing': ['0']
+        }
+      );
+      let state = {
+        balances: {
+          '0': 1,
+          '1': 1,
+          '2': 1,
+          '3': 1
+        },
+        activePolls: {
+          [defaultQHash]: poll
+        },
+        inactivePolls: []
+      }
+
+      polls.blockHandler(state, {height: 5});
+
+      console.log(`State: ${JSON.stringify(state)}`);
+      // assert.deepStrictEqual(mutableState, {activePolls: {}, inactivePolls: [poll]});
+
+    });
+
 
   });
 });
