@@ -1,1 +1,4 @@
 node_modules/
+
+# Local storage of privkeys! only share with admins..
+privkeys.json
