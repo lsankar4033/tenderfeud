@@ -18,6 +18,7 @@ function buildPoll(opts = {}, answers = {}) {
     endBlock: opts['endBlock'] || 10,
     minAnswers: opts['minAnswers'] || 10,
     question: opts['question'] || defaultQuestion,
+    payout: opts['payout'] || 10,
     answers: answers
   }
 }

@@ -9,6 +9,7 @@ let { verifyTx, sha256, getTxHash, pubkeyToAddress, clone } = require('./utils.j
 //      endBlock
 //      question
 //      minAnswers
+//      payout
 //      answers: {answer: [sorted_addresses]}
 //   }
 //  }
@@ -19,6 +20,7 @@ let { verifyTx, sha256, getTxHash, pubkeyToAddress, clone } = require('./utils.j
 //      endBlock
 //      question
 //      minAnswers
+//      payout
 //      answers: {answer: [sorted_addresses]}
 //      }
 //    ]
@@ -70,6 +72,8 @@ function voteHandler(state, tx, chain) {
 const minBlockDuration = 500;
 const defaultMinAnswers = 2;
 
+// TODO: Change payout validation such that payout + all other outstanding payotus not greater than creator's
+// balance
 function createHandler(state, tx, chain) {
   // Create TX Schema
   // question
@@ -107,7 +111,6 @@ function createHandler(state, tx, chain) {
 
   // Make sure poll doesn't already exist
   let questionHash = sha256(tx.question)
-  console.log(questionHash)
   let found = 0
   for (q in state.activePolls) {
   	if (q == questionHash) {
@@ -125,16 +128,20 @@ function createHandler(state, tx, chain) {
     endBlock: tx.endBlock,
     question: tx.question,
     minAnswers: minAnswers,
+    payout: tx.payout;
     answers: {}
   }
 }
 
 function winnersToPayouts(sortedWinners, totalPayout) {
   // TODO
+  return {}
 }
 
+// Gets all answers tied for the most votes
 function getBestAnswers(answers) {
-  // TODO
+
+  return [];
 }
 
 // NOTE: Return address -> payout
@@ -149,7 +156,7 @@ function pollToPayouts(poll) {
   else {
     let bestAnswers = getBestAnswers(answers);
 
-    // No winners if there's  atie
+    // No winners if there's a tie
     if (bestAnswers.length > 1) {
       return {};
     } else {
