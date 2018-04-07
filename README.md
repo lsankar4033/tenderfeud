@@ -36,11 +36,15 @@ To reward earlier voters of an option, exponential decay on payouts for the righ
 ## Tasks
 Blockchain tech:
 - build v0.1, static validator set
-  - ~~create, poll~~
-  - ~~block handler~~
-  - query handlers
-  - tests?
-- deploy v0.1 to cloud w/webapp potentially
+  - ~~basic structure~~
+  - ~~create, poll query handlers~~
+  - block handler
+    - ~~inactivate old polls~~
+    - handle payouts
+  - tests for all handlers
+  - methods for querying poll state, account balance
+- deploy v0.1 to cloud w/webapp
+- increase validator cluster size
 - build v0.2, dynamic validators
   - i.e. a mechanism for anyone to be a validator
 
