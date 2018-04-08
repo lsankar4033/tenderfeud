@@ -36,3 +36,13 @@ vote order (i.e. early votes get more).
 
 To avoid the degenerate case of only *one* answer, we can set polls up to have a minimum number of answers. If
 this minimum *isn't* met by the time the poll ends, the poll creator is refunded their payment.
+
+## Development Notes
+To run locally, 
+`cd lotion_app`
+`npm i`
+`node index.js`
+`cd ..`
+`cd frontend`
+`npm run dev`
+Open a browser to `localhost:3000`
