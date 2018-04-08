@@ -1,5 +1,9 @@
 import Vuex from 'vuex'
 import utils from '~/front_utils'
+let secp = require('secp256k1')
+const username = 'blah'
+const priv = utils.sha256(username)
+const pub = secp.publicKeyCreate(priv)
 const createStore = () => {
   return new Vuex.Store({
     state: {
@@ -9,9 +13,16 @@ const createStore = () => {
       inactivePollIds: [],
       activePolls: {},
       inactivePolls: {},
+      user: {
+        votes: [],
+        name: username,
+        publicKey: pub,
+        address: utils.pubkeyToAddress(pub)
+      }
     },
     actions: {
       async getBlockchain ({ commit }) {
+        // const blockchain = await this.$axios.$get('http://52.53.238.253:46657/state')
         const blockchain = await this.$axios.$get('http://localhost:3001/state')
         commit('get_blockchain', blockchain)
       },
@@ -21,7 +32,7 @@ const createStore = () => {
         if (poll) {
           // here we tell backend 
           // sign tx
-          const publicKey = utils.privkeyToPubkey(utils.sha256('blah'))
+          const publicKey = utils.privkeyToPubkey(priv)
           const tx = {
             type: "vote",
             question: poll.question,
@@ -30,12 +41,13 @@ const createStore = () => {
           }
 
           const sigHash = utils.getTxHash(tx)
-          tx.signature = utils.getSignature(sigHash, utils.sha256('blah'))
+          tx.signature = utils.getSignature(sigHash, utils.sha256(state.user.name))
+          // console.log(utils.pubkeyToAddress(utils.('blah')))
           const vote = await this.$axios.$post('http://localhost:3001/txs', tx)
-          poll.userVote = payload.answer
-          poll.status = 'voteReceived'
+          // console.log(vote)
+          console.log(utils.pubkeyToAddress(pub))
+          commit('vote', payload)
         }
-        commit('vote')
       }
     },
     mutations: {
@@ -43,8 +55,16 @@ const createStore = () => {
         state.currentBlock++
       },
       vote (state, payload) {
-        console.log('sha', utils.sha256('asdf'))
-        
+        // console.log('sha', utils.sha256('asdf'))
+        // const pollId = payload.pollId
+        // const poll = state.activePolls[pollId]
+        // poll.userVote = payload.answer
+        // poll.status = 'voteReceived'
+        // state.activePolls[pollId] = Object.assign({}, poll)
+        state.user.votes.push({
+          id: payload.pollId,
+          answer: payload.answer,
+        })
       },
       get_blockchain (state, blockchain) {
         state.blockChain = blockchain
@@ -65,7 +85,7 @@ const createStore = () => {
           inactivePoll.id = state.inactivePollIds[i]
           inactivePolls[state.inactivePollIds[i]] = inactivePoll
         }
-        state.activePolls = Object.assign({}, activePolls)
+        state.activePolls = Object.assign(state.activePolls, activePolls)
         state.inactivePolls = Object.assign({}, inactivePolls)
       }
     }

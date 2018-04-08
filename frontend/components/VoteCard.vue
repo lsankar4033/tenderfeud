@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="box">
-      <template v-if="status === 'getInput'">
+      {{ poll }}
+      <template v-if="!voteReceived && status !== 'loading'">
         <span>${{ poll.payout }}</span>
         <h1>{{ poll.question }}</h1>
         <div class="flex-container">
@@ -23,7 +24,7 @@
           <div class="double-bounce2"></div>
         </div>
       </template>
-      <template v-if="status==='inputReceived'">
+      <template v-if="voteReceived && status !== 'loading'">
         hi
         <!-- You voted {{ this.poll.options[this.poll.userVote].text }} -->
       </template>
@@ -39,6 +40,7 @@
 
 <script>
 import ProgressBar from '~/components/ProgressBar.vue'
+import utils from '~/front_utils'
 import ActivePollListItem from '~/components/ActivePollListItem.vue'
 import InactivePollListItem from '~/components/InactivePollListItem.vue'
 export default {
@@ -65,11 +67,24 @@ export default {
         })
       }
       return result
-    }
+    },
+    voteReceived() {
+      const options = Object.keys(this.poll.answers)
+      const userAddress = this.$store.state.user.address
+      for (let i = 0; i < options.length; i++) {
+        for (let j = 0; j < this.poll.answers[options[i]].length; j++) {
+          // console.log(this.poll.answers[options[i]][j], pubKey)
+          // console.log(pubKey)
+          if (this.poll.answers[options[i]][j] === userAddress) {
+            return true
+          }
+        }
+      }
+      return false
+    },
   },
   methods: {
     vote(option) {
-      console.log(option)
       const payload = {
         pollId: this.poll.id,
         answer: option.text, //consider using option index
