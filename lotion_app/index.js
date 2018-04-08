@@ -3,6 +3,16 @@
 let lotion = require('lotion');
 require('dotenv').config({path: ".env-node1"});
 
+const awsPeer = '52.53.238.253:46658';
+
+// Could pass this in as a config file later (i.e. via env var)
+let lotionOpts = {
+  // genesis: '',       // path to genesis.json. generates new one if not specified.
+  peers: [awsPeer],     // array of '<host>:<p2pport>' of initial tendermint nodes to connect to. does automatic peer discovery if not specified.
+  p2pPort: 46658,       // port to use for tendermint peer connections
+  tendermintPort: 46657 // port to use for tendermint rpc
+}
+
 // TODO: Pass in opts
 let polls = require('./src/polls')({});
 

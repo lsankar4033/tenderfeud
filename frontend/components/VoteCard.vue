@@ -7,9 +7,11 @@
         <div class="flex-container">
           <div v-for="answer in answers" :key="answer.text">
             <div class="options">
-              <button @click="vote(answer)" class="button">{{ answer.text }}</button>
-              <div class="vote-container">
-                <span class="num-votes">{{ answer.votes }}</span>
+              <div v-if="poll.active">
+                <ActivePollListItem :answer="answer" :vote="vote" />
+              </div>
+              <div v-if="!poll.active">
+                <InactivePollListItem :answer="answer" />
               </div>
             </div>
           </div>
@@ -22,7 +24,8 @@
         </div>
       </template>
       <template v-if="status==='inputReceived'">
-        You voted {{ this.poll.options[this.poll.userVote].text }}
+        hi
+        <!-- You voted {{ this.poll.options[this.poll.userVote].text }} -->
       </template>
       <progress-bar :startBlock="poll.startBlock" :endBlock="poll.endBlock" />
       <footer>
@@ -36,11 +39,15 @@
 
 <script>
 import ProgressBar from '~/components/ProgressBar.vue'
+import ActivePollListItem from '~/components/ActivePollListItem.vue'
+import InactivePollListItem from '~/components/InactivePollListItem.vue'
 export default {
   name: 'VoteCard',
   props: ['poll'],
   components: {
     ProgressBar,
+    ActivePollListItem,
+    InactivePollListItem,
   },
   data() {
     return {
@@ -62,14 +69,16 @@ export default {
   },
   methods: {
     vote(option) {
+      console.log(option)
       const payload = {
-        pollNum: this.poll.number,
-        option: option.number, //consider using option index
+        pollId: this.poll.id,
+        answer: option.text, //consider using option index
       }
       this.status = 'loading'
-      this.$store.commit('vote', payload)
+      this.$store.dispatch('voteOnBlockchain', payload)
       setTimeout(() => {
-        this.status = 'inputReceived'
+        // change this to input received
+        this.status = 'getInput'
       }, 2000)
     }
   }
