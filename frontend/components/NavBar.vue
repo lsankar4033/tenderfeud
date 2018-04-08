@@ -1,15 +1,17 @@
 <template>
   <!-- TODO: Style entire header, have default stuff there -->
-  <div>
-    <div id="account-balance">
+  <div class="columns">
+    <div id="account-balance" class="column">
       Balance: {{ accountBalance }} tokens
     </div>
 
-    <div id="block-number">
+    <div id="block-number" class="column">
       Block Number: {{ currentBlock }}
     </div>
 
-    <input id="name-input" v-on:keyup="setUser" v-model="nameInput" placeholder="Enter name...">
+    <div class="column">
+      <input id="name-input" v-on:keyup="setUser" v-model="nameInput" placeholder="Enter name...">
+    </div>
 
   </div>
 </template>
