@@ -71,7 +71,7 @@ function voteHandler(state, tx, chain) {
 }
 
 const minBlockDuration = 500;
-const defaultMinAnswers = 1;
+const defaultMinAnswers = 2;
 
 // TODO: Change payout validation such that payout + all other outstanding payotus not greater than creator's
 // balance
@@ -124,8 +124,8 @@ function createHandler(state, tx, chain) {
 
   // Validate num answers
   let minAnswers = tx.minAnswers || defaultMinAnswers;
-  if (minAnswers < 2) {
-    throw Error(`Must specify min answers > 2`);
+  if (minAnswers < 1) {
+    throw Error(`Must specify min answers > 1`);
   }
 
   let endBlock = chain.height + tx.endBlockHeight
