@@ -39,10 +39,17 @@ this minimum *isn't* met by the time the poll ends, the poll creator is refunded
 
 ## Development Notes
 To run locally, 
+
 `cd lotion_app`
+
 `npm i`
+
 `node index.js`
+
 `cd ..`
+
 `cd frontend`
+
 `npm run dev`
+
 Open a browser to `localhost:3000`
