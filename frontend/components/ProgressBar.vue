@@ -1,11 +1,17 @@
 <template>
   <div>
-    <template v-if="endBlock > currentBlock">
-      <span v-for="(block, idx) in blocks" :key="block.number">
+    <template v-if="true">
+      <!-- <span v-for="(block, idx) in blocks" :key="block.number">
         <div :class="{ block: true, mined: block.number < currentBlock }">
           <span> {{ idx + 1 }} </span>
         </div>
-      </span>
+      </span> -->
+      <div class="flex-container">
+        <!-- <div v-for="block in blockArray" :key="block.num">
+          <div :class="{block: true, mined: block.mined}"></div>
+        </div> -->
+        
+      </div>
     </template>
     <template v-else>
       Poll Complete
@@ -19,18 +25,27 @@ export default {
   props: ['startBlock', 'endBlock'],
   computed: {
     currentBlock() {
-      return this.$store.state.currentBlock
+      return this.$store.state.blockChain.blockHeight
     },
     blocks() {
       return this.$store.state.blocks
     },
+    // blockMined(block) {
+    //   if (block.num > this.currentBlock) return true
+    //   return false
+    // },
     // doesn't work
     blockArray() {
-      let result = []
-      for(let i = 0; i < this.$store.state.currentBlock; i++) {
-        result.push(i)
-      }
-      return result
+      return []
+      // let result = []
+      // for(let i = this.startBlock; i < this.endBlock; i++) {
+      //   const block = {
+      //     num: i,
+      //     mined: i > parseFloat(this.currentBlock) ? true : false
+      //   }
+      //   result.push(block)
+      // }
+      // return result
     },
   },
 }
@@ -38,10 +53,9 @@ export default {
 
 <style>
 .flex-container {
-  align-items: flex-start;
+  flex-wrap: wrap
 }
 .block {
-  display: inline-block;
   width: 14px;
   height: 14px;
   padding: 5px;
