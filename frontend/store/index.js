@@ -47,6 +47,7 @@ const createStore = () => {
             answer: payload.answer
           }
           const sigHash = utils.getTxHash(tx)
+
           tx.signature = utils.getSignature(sigHash, privUser)
           // console.log(utils.pubkeyToAddress(utils.('blah')))
           const vote = await this.$axios.$post('http://localhost:3001/txs', tx)
