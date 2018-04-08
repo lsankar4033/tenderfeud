@@ -3,9 +3,9 @@ import utils from '~/front_utils'
 let secp = require('secp256k1')
 
 // TODO: should we remove this bogus initialization?
-const username = 'blah'
-const priv = utils.sha256(username)
-const pub = secp.publicKeyCreate(priv)
+// const username = 'blah'
+// const priv = utils.sha256(username)
+// const pub = secp.publicKeyCreate(priv)
 const createStore = () => {
   return new Vuex.Store({
     state: {
@@ -18,10 +18,11 @@ const createStore = () => {
       inactivePolls: {},
       user: {
         votes: [],
-        name: username,
-        publicKey: pub,
-        address: utils.pubkeyToAddress(pub),
-        balance: 0
+        name: null,
+        publicKey: null,
+        address: null,
+        balance: 0,
+        authError: false,
       },
       createPollVisible: false
     },
@@ -86,6 +87,9 @@ const createStore = () => {
           answer: payload.answer,
         })
       },
+      authError(state, boolean) {
+        state.user.authError = boolean
+      },
       get_blockchain (state, blockchain) {
         state.blockChain = blockchain
         // state.blockHeight = blockchain.blockHeight
@@ -107,7 +111,7 @@ const createStore = () => {
         }
         state.activePolls = Object.assign(state.activePolls, activePolls)
         state.inactivePolls = Object.assign({}, inactivePolls)
-
+        console.log(blockchain.balances)
         state.balances = blockchain.balances
       },
       set_user (state, userName) {

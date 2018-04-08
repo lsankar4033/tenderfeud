@@ -9,7 +9,8 @@
       </div>
 
       <div class="column">
-        <input class="input is-success" id="name-input" v-on:keyup="setUser" v-model="nameInput" placeholder="Enter name...">
+        <input :class="{input: true, 'is-success': true, 'is-danger': authErr}" id="name-input" v-on:keyup="setUser" v-model="nameInput" placeholder="Enter name...">
+        <div v-if="authErr" :style="{color: 'red'}">Please log in</div>
         <div id="account-balance">
           <span class="boldtext">{{ accountBalance }}</span> tokens
         </div>
@@ -40,15 +41,19 @@ export default {
       const balance = this.$store.state.balances[address]
 
       return balance || 0
+    },
+    authErr() {
+      return this.$store.state.user.authError
     }
   },
   methods: {
     setUser() {
+      this.$store.commit('authError', false)
       this.$store.commit('set_user', this.nameInput)
     },
     setCreatePoll() {
       this.$store.commit('toggle_create_poll', true)
-    }
+    },
   }
 }
 </script>
