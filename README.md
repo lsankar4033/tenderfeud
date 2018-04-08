@@ -1,3 +1,5 @@
+![hero-image](https://res.cloudinary.com/eventbike/image/upload/c_scale,w_628/v1523226619/image_hszica.png)
+
 The internet gave everyone a voice. The blockchain gives everyone the economic incentive to use them.
 
 Tenderfeud is a project built for the [Crypto 4 Your Thoughts](https://c4yt.io/) in SF. For more details on
