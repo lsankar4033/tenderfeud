@@ -323,17 +323,17 @@ describe('BlockHandler', () => {
         {
           endBlock: 5,
           minAnswers: 2,
-          creator: '0',
+          creator: 'a',
           payout: 10
         },
         {
-          'winning': ['1', '2', '3'],
-          'losing': ['0']
+          'winning': ['b', 'c', 'd'],
+          'losing': ['a']
         }
       );
       let state = {
         balances: {
-          '0': 10
+          'a': 10
         },
         activePolls: {
           [defaultQHash]: poll
@@ -344,12 +344,12 @@ describe('BlockHandler', () => {
       polls.blockHandler(state, {height: 5});
 
       let newBalances = state.balances;
-      assert.equal(newBalances['0'], 0);
+      assert.equal(newBalances['a'], 0);
 
       // NOTE: May want to match to specific weight fn later
-      assert.equal(newBalances['1'] > newBalances['2'], true);
-      assert.equal(newBalances['2'] > newBalances['3'], true);
-      assert.equal(newBalances['1'] + newBalances['2'] + newBalances['3'], 10);
+      assert.equal(newBalances['b'] > newBalances['c'], true);
+      assert.equal(newBalances['c'] > newBalances['d'], true);
+      assert.equal(Math.round(newBalances['b'] + newBalances['c'] + newBalances['d']), 10);
     });
 
   });
