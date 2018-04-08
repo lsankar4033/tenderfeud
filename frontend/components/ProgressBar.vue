@@ -1,20 +1,14 @@
 <template>
-  <div>
+  <div class="outer">
     <template v-if="true">
-      <!-- <span v-for="(block, idx) in blocks" :key="block.number">
-        <div :class="{ block: true, mined: block.number < currentBlock }">
-          <span> {{ idx + 1 }} </span>
-        </div>
-      </span> -->
-      <div class="flex-container">
-        <!-- <div v-for="block in blockArray" :key="block.num">
-          <div :class="{block: true, mined: block.mined}"></div>
-        </div> -->
-        
+      <div class="inner">
+      <div v-if="blocksRemaining > 0">
+        <span class="large">{{ blocksRemaining }}</span> blocks remaining
       </div>
-    </template>
-    <template v-else>
-      Poll Complete
+      <div v-else>
+        Poll complete
+      </div>
+      </div>
     </template>
   </div>
 </template>
@@ -27,31 +21,23 @@ export default {
     currentBlock() {
       return this.$store.state.blockChain.blockHeight
     },
+    blocksRemaining() {
+      const num = this.endBlock - this.currentBlock
+      const result = num > 0 ? num : 0
+      return result
+    },
+    percentage() {
+      const total = this.endBlock - this.startBlock
+      return `${100 - (this.blocksRemaining / total * 100)}%`
+    },
     blocks() {
       return this.$store.state.blocks
-    },
-    // blockMined(block) {
-    //   if (block.num > this.currentBlock) return true
-    //   return false
-    // },
-    // doesn't work
-    blockArray() {
-      return []
-      // let result = []
-      // for(let i = this.startBlock; i < this.endBlock; i++) {
-      //   const block = {
-      //     num: i,
-      //     mined: i > parseFloat(this.currentBlock) ? true : false
-      //   }
-      //   result.push(block)
-      // }
-      // return result
     },
   },
 }
 </script>
 
-<style>
+<style scoped>
 .flex-container {
   flex-wrap: wrap
 }
@@ -67,5 +53,9 @@ export default {
 }
 .mined {
   background: black;
+}
+.large {
+  font-weight: 600;
+  font-size: 14pt;
 }
 </style>

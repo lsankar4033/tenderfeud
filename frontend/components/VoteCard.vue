@@ -1,20 +1,27 @@
 <template>
   <div>
-    <div class="box">
-      {{ poll }}
-      <template v-if="!voteReceived && status !== 'loading'">
+    <div class="card">
+      <template v-if="status !== 'loading'">
         <span>${{ poll.payout }}</span>
-        <h1>{{ poll.question }}</h1>
-        <div class="flex-container">
+        <h1 class="card-header">{{ poll.question }}</h1>
+        <div :class="{flexcontainer: poll.active && !userVote}">
           <div v-for="answer in answers" :key="answer.text">
             <div class="options">
-              <div v-if="poll.active">
+              <div class="active-item" v-if="poll.active && !userVote">
                 <ActivePollListItem :answer="answer" :vote="vote" />
+                <!-- <div v-if="idx === answers.length -1">hi</div> -->
               </div>
-              <div v-if="!poll.active">
-                <InactivePollListItem :answer="answer" />
+              <div v-if="!poll.active || userVote">
+                <InactivePollListItem :answer="answer" :highlight="userVote" />
               </div>
             </div>
+          </div>
+          <div class="new-answer">
+            <input class="input is-primary" v-model="newAnswer"/>
+            <button class="button is-small">New Answer</button>
+          </div>
+          <div v-if="userVote">
+            You voted for {{ userVote }}
           </div>
         </div>
       </template>
@@ -24,16 +31,9 @@
           <div class="double-bounce2"></div>
         </div>
       </template>
-      <template v-if="voteReceived && status !== 'loading'">
-        hi
-        <!-- You voted {{ this.poll.options[this.poll.userVote].text }} -->
-      </template>
-      <progress-bar :startBlock="poll.startBlock" :endBlock="poll.endBlock" />
-      <footer>
-        <span class="right">
-          {{ poll.hash }}
-        </span>
-      </footer>
+      <div class="card-footer">
+        <progress-bar :startBlock="poll.startBlock" :endBlock="poll.endBlock" />
+      </div>
     </div>
   </div>
 </template>
@@ -43,6 +43,8 @@ import ProgressBar from '~/components/ProgressBar.vue'
 import utils from '~/front_utils'
 import ActivePollListItem from '~/components/ActivePollListItem.vue'
 import InactivePollListItem from '~/components/InactivePollListItem.vue'
+import PollResults from '~/components/PollResults.vue'
+
 export default {
   name: 'VoteCard',
   props: ['poll'],
@@ -50,6 +52,7 @@ export default {
     ProgressBar,
     ActivePollListItem,
     InactivePollListItem,
+    PollResults,
   },
   data() {
     return {
@@ -67,6 +70,15 @@ export default {
         })
       }
       return result
+    },
+    userVote() {
+      const votes = this.$store.state.user.votes
+      for (let i = 0; i < votes.length; i++) {
+        if (votes[i].id === this.poll.id) {
+          return votes[i].answer
+        }
+      }
+      return false
     },
     voteReceived() {
       const options = Object.keys(this.poll.answers)
@@ -101,9 +113,9 @@ export default {
 </script>
 
 <style>
-.flex-container {
+.flexcontainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 .options {
   display: flex;
@@ -115,20 +127,23 @@ footer {
 .right {
   margin-left: auto;
 }
-/* .num-container {
-  background: red;
-  width: 15px;
-  height: 15px;
-  border-radius: 25px;
-} */
-.num-votes {
-  position: absolute;
-  color: white;
-  background: red;
-  padding: 2px 5px;
-  border-radius: 50%;
-  transform: translate(-14px, -28px)
+.new-answer {
+  display: flex;
+  flex-direction: column;
 }
+
+
+h1.card-header {
+  display: inherit;
+  text-align: center;
+  padding: 5px 0 20px 0;
+  font-size: 16pt;
+}
+
+.active-item {
+  padding: 16px;
+}
+
 .spinner {
   width: 40px;
   height: 40px;
