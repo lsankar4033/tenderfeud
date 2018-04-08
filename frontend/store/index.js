@@ -30,7 +30,7 @@ const createStore = () => {
         const pollId = payload.pollId
         const poll = state.activePolls[pollId]
         if (poll) {
-          // here we tell backend 
+          // here we tell backend
           // sign tx
           const publicKey = utils.privkeyToPubkey(priv)
           const tx = {
@@ -48,6 +48,24 @@ const createStore = () => {
           console.log(utils.pubkeyToAddress(pub))
           commit('vote', payload)
         }
+      },
+      async createNewPoll ({ state, commit }, payload) {
+        const questionString = payload.questionString
+        // here we tell backend
+        // sign tx
+        const publicKey = utils.privkeyToPubkey(priv)
+        const tx = {
+          type: "create",
+          question: questionString,
+          creatorPubkey: publicKey,
+          payout: payload.payout,
+          endBlock: state.blockChain.blockHeight + payload.blockLifetime,
+          startBlock: state.blockChain.blockHeight,
+        }
+        console.log(tx)
+        const sigHash = utils.getTxHash(tx)
+        tx.signature = utils.getSignature(sigHash, utils.sha256(state.user.name))
+        const create = await this.$axios.$post('http://localhost:3001/txs', tx)
       }
     },
     mutations: {

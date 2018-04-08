@@ -26,14 +26,8 @@ const pollInitialState = {
 }
 
 // TODO: Use the initial state defined on polls module
-let app = lotion({  genesis: "./genesis.json", 
-										keys: "/Users/mmiranda/Desktop/privkey0.json", 
-										peers: ["localhost:30096"], 
-										tendermintPort: 30092, 
-										initialState: pollInitialState,
+let app = lotion({  initialState: pollInitialState,
 										devMode: true,
-										p2pPort: 30095,
-										logTendermint: true,
 										})
 
 app.use(polls.txHandler)
