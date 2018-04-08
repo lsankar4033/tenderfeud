@@ -45,13 +45,14 @@ const createStore = () => {
             voterPubkey: pubUser,
             answer: payload.answer
           }
-
           const sigHash = utils.getTxHash(tx)
+<<<<<<< HEAD
+          tx.signature = utils.getSignature(sigHash, utils.sha256(state.user.name))
+=======
           tx.signature = utils.getSignature(sigHash, privUser)
           // console.log(utils.pubkeyToAddress(utils.('blah')))
+>>>>>>> master
           const vote = await this.$axios.$post('http://localhost:3001/txs', tx)
-          // console.log(vote)
-          console.log(utils.pubkeyToAddress(pub))
           commit('vote', payload)
         }
       },
@@ -82,12 +83,6 @@ const createStore = () => {
         state.currentBlock++
       },
       vote (state, payload) {
-        // console.log('sha', utils.sha256('asdf'))
-        // const pollId = payload.pollId
-        // const poll = state.activePolls[pollId]
-        // poll.userVote = payload.answer
-        // poll.status = 'voteReceived'
-        // state.activePolls[pollId] = Object.assign({}, poll)
         state.user.votes.push({
           id: payload.pollId,
           answer: payload.answer,

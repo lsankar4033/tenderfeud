@@ -19,9 +19,10 @@ export default {
   position: absolute;
   color: white;
   background: red;
-  padding: 2px 5px;
+  font-size: 7pt;
+  padding: 2px 7px;
   border-radius: 50%;
-  transform: translate(-14px, -28px)
+  transform: translate(62px, -47px)
 }
 </style>
 
