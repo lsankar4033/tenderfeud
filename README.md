@@ -1,6 +1,15 @@
-Family Feud on tendermint.
+Family feud meets prediction markets on Tendermint.
 
-## Mechanism design notes (nothing set in stone)
+## Background
+
+## System design
+- lotionjs for nodes
+  - actions: createPoll, voteOnPoll, sendCoins
+  - queries: getPolls, getPollInfo, getBalance
+- static network of validators in the cloud
+- web frontend
+
+## Mechanism design
 Genesis block distributes tokens among some number of people (manual pre-sale among other attendees?).
 
 From that point, users can either create a poll, view existing polls, or submit a vote for an existing
@@ -18,41 +27,3 @@ this minimum *isn't* met by the time the poll ends, the poll creator is refunded
 some default minimum, but we could also make this set-able by the poll creator.
 
 To reward earlier voters of an option, exponential decay on payouts for the right answer (or something).
-
-## Overall system design
-- lotionjs for nodes
-  - actions: createPoll, voteOnPoll, sendCoins
-  - queries: getPolls, getPollInfo, getBalance
-- static network of validators in the cloud
-- web frontend
-
-## Open questions
-- ~~how does network work in lotionjs? i.e. how do we network multiple nodes on the same blockchain?~~
-  - seems that tendermint under lotion does automatic peer discovery and other lotion nodes can connect to
-    your network with their initial list of peers. from there, it's straightforward to create a simple web
-    interface for interacting with the thing
-- what's the right setting of parameters (payouts, etc.) that incentivize good behaviour?
-
-## Tasks
-Blockchain tech:
-- build v0.1, static validator set
-  - ~~basic structure~~
-  - ~~create, poll query handlers~~
-  - block handler
-    - ~~inactivate old polls~~
-    - ~~handle payouts~~
-      - ~~revisit and fix payout logic for poll creation...~~
-  - ~~methods for querying poll state, account balance~~
-- deploy v0.1 to cloud w/webapp
-
-Web tech:
-- ~~simple web frontend for viewing/voting on polls~~
-- finish entire flow
-- styling/design
-
-Users:
-- Think of initial poll questions
-
-Presentation:
-- written part of the presentation (LS)
-- video presentation
