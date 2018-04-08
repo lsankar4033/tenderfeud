@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import utils from '~/front_utils'
 export default {
   name: 'NavBar',
   data() {
