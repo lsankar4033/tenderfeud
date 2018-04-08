@@ -1,16 +1,18 @@
 <template>
   <div>
     <div class="columns">
-      <div id="account-balance" class="column">
-        Balance: {{ accountBalance }} tokens
-      </div>
-
-      <div id="block-number" class="column">
-        Block Number: {{ currentBlock }}
+      <div id="block-number" class="box column block-num-container">
+        <div class="block-num">
+          <span class="boldtext">{{ currentBlock }}</span>
+          <span>Block Number</span>
+        </div>
       </div>
 
       <div class="column">
-        <input id="name-input" v-on:keyup="setUser" v-model="nameInput" placeholder="Enter name...">
+        <input class="input is-success" id="name-input" v-on:keyup="setUser" v-model="nameInput" placeholder="Enter name...">
+        <div id="account-balance">
+          <span class="boldtext">{{ accountBalance }}</span> tokens
+        </div>
       </div>
 
     </div>
@@ -56,5 +58,29 @@ export default {
   position: fixed;
   bottom: 30px;
   right: 30px;
+  z-index: 999;
+}
+#account-balance {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+}
+.block-num {
+  /* text-align: center;
+  margin: 0 auto; */
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin: 0 auto;
+}
+.block-num-container {
+  display: flex;
+  align-items: center;
+}
+.boldtext {
+  font-weight: 600;
+  font-size: 14pt;
 }
 </style>

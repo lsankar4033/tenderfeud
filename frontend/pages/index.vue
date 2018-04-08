@@ -20,6 +20,7 @@
 import VoteCard from '~/components/VoteCard.vue'
 import NavBar from '~/components/NavBar.vue'
 import NewPoll from '~/components/NewPoll.vue'
+
 export default {
   components: {
     VoteCard,
@@ -35,7 +36,7 @@ export default {
         this.$store.dispatch('getBlockchain')
         this.getBlockchain()
       }, 1000)
-    }
+    },
   },
   computed: {
     blockchain() {
