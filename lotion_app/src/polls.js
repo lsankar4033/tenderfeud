@@ -53,7 +53,6 @@ function voteHandler(state, tx, chain) {
   }
 
   let poll = state.activePolls[questionHash]
-  console.log(poll)
   found = 0
   for (a in poll.answers) {
   	if (a == tx.answer) {
@@ -148,7 +147,7 @@ function payoutDistFn(n) {
 }
 
 function getPayoutWeights(sortedWinners) {
-  let weights = sortedWinners.map( (w) => payoutDistFn(w) );
+  let weights = sortedWinners.map( (w, i) => payoutDistFn(i) );
   let total = 0;
   for (var w of weights) {
     total += w;
@@ -160,7 +159,6 @@ function getPayoutWeights(sortedWinners) {
   for (var i in normalizedWeights) {
     winnerToWeight[sortedWinners[i]] = normalizedWeights[i];
   }
-
   return winnerToWeight;
 }
 
@@ -241,10 +239,12 @@ function blockHandler(state, chain) {
       // Distribute winnings among winners
       if (poll.payout > 0) {
         let addressToPayout = pollToPayouts(poll);
-        state.balances[poll.creator] -= poll.payout;
-        for (var payoutAddress in addressToPayout) {
-          state.balances[payoutAddress] = state.balances[payoutAddress] || 0;
-          state.balances[payoutAddress] += addressToPayout[payoutAddress];
+        if (Object.keys(addressToPayout).length > 0) {
+					state.balances[poll.creator] -= poll.payout;
+					for (var payoutAddress in addressToPayout) {
+						state.balances[payoutAddress] = state.balances[payoutAddress] || 0;
+						state.balances[payoutAddress] += addressToPayout[payoutAddress];
+					}
         }
       }
     }
@@ -260,7 +260,7 @@ function blockHandler(state, chain) {
 module.exports = (opts) => {
   return {
     txHandler: (state, tx, chain) => {
-      if (tx.type === 'create') {
+      if (tx.type == 'create') {
         createHandler(state, tx, chain);
       } else if (tx.type == 'vote') {
         voteHandler(state, tx, chain);

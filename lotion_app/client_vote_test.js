@@ -6,8 +6,11 @@ let { sha256, pubkeyToAddress, getTxHash, getSignature } = require('./src/utils.
 let priv = sha256('margarita')
 let pub = secp.publicKeyCreate(priv)
 
-let priv2 = sha256('lakshman')
+let priv2 = sha256('lakshman123')
 let pub2 = secp.publicKeyCreate(priv2)
+
+let priv3 = sha256('lakshman456')
+let pub3 = secp.publicKeyCreate(priv3)
 
 async function main () {
   let tx = {
@@ -43,13 +46,13 @@ async function main () {
   tx = {
     type: "vote",
     question: "What is the best cryptocurrency?",
-    voterPubkey: pub2,
+    voterPubkey: pub3,
     answer: "ether"
   }
   
   // sign tx
   sigHash = getTxHash(tx)
-  tx.signature = getSignature(sigHash, priv2)
+  tx.signature = getSignature(sigHash, priv3)
 
 	// 3) lakshman: vote ether
   res = await post('http://localhost:3001/txs', tx)
