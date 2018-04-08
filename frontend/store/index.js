@@ -1,12 +1,15 @@
 import Vuex from 'vuex'
 import utils from '~/front_utils'
 let secp = require('secp256k1')
+
+// TODO: should we remove this bogus initialization?
 const username = 'blah'
 const priv = utils.sha256(username)
 const pub = secp.publicKeyCreate(priv)
 const createStore = () => {
   return new Vuex.Store({
     state: {
+      balances: {},
       blockChain: {},
       blockChainPollIds: [],
       activePollIds: [],
@@ -105,6 +108,15 @@ const createStore = () => {
         }
         state.activePolls = Object.assign(state.activePolls, activePolls)
         state.inactivePolls = Object.assign({}, inactivePolls)
+
+        state.balances = blockchain.balances
+      },
+      set_user (state, userName) {
+        state.user.name = userName
+        let privkey = utils.sha256(userName)
+
+        state.user.publicKey = utils.privkeyToPubkey(privkey)
+        state.user.address = utils.pubkeyToAddress(state.user.publicKey)
       }
     }
   })
