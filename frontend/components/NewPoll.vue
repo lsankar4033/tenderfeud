@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="createPollVisible">
     <br><br>
     <h1>Create new poll</h1>
     <input v-model="questionString" placeholder="question">
@@ -23,13 +23,20 @@ export default {
       payout: null,
     }
   },
+  computed: {
+    createPollVisible() {
+      return this.$store.state.createPollVisible
+    }
+  },
   methods: {
     create: function (event) {
       this.$store.dispatch('createNewPoll', {
-        blockLifetime: 1000,
-        questionString: "dummy question",
-        payout: 0,
+        blockLifetime: this.blockLifetime,
+        questionString: this.questionString,
+        payout: this.payout,
       })
+
+      this.$store.commit('toggle_create_poll', false)
     }
   }
 }
