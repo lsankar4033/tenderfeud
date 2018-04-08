@@ -10,6 +10,8 @@ incentives.
 
 It's a poll system with token-incentivized voting
 
+![image of voting](https://media.giphy.com/media/cRLPqhKGlKTWAtZnEU/giphy.gif)
+
 ## System design :question:
 The application consists of a vue.js/node.js frontend living in `frontend/` and a lotionjs/tendermint
 blockchain app (runs a single validator node) living in `lotion_app`.
@@ -17,6 +19,8 @@ blockchain app (runs a single validator node) living in `lotion_app`.
 The project is currently configured expecting the frontend and the validator node to live on the same machine,
 but it's pretty straightforward to extend to a cluster of tendermint validators creating the blockchain and a
 webserver that interacts with any of them via TCP.
+
+![image of lotionjs](https://media.giphy.com/media/2vmhnUtlD27F2sy5JO/giphy.gif)
 
 ## Mechanism design :moneybag:
 Genesis block distributes tokens among some number of people.
@@ -36,6 +40,7 @@ vote order (i.e. early votes get more).
 
 To avoid the degenerate case of only *one* answer, we can set polls up to have a minimum number of answers. If
 this minimum *isn't* met by the time the poll ends, the poll creator is refunded their payment.
+![image of auth](https://media.giphy.com/media/1wnpowYKbKMrPqcFxP/giphy.gif)
 
 ## Development Notes :wrench:
 To run locally, 
