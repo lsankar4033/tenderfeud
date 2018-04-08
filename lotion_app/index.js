@@ -1,6 +1,7 @@
 "use strict";
 
 let lotion = require('lotion');
+require('dotenv').config({path: ".env-node1"});
 
 // TODO: Pass in opts
 let polls = require('./src/polls')({});
@@ -15,9 +16,19 @@ const pollInitialState = {
 }
 
 // TODO: Use the initial state defined on polls module
-let app = lotion({ initialState: pollInitialState })
+let app = lotion({  genesis: "./genesis.json", 
+										keys: "/Users/mmiranda/Desktop/privkey0.json", 
+										peers: ["localhost:30096"], 
+										tendermintPort: 30092, 
+										initialState: pollInitialState,
+										devMode: true,
+										p2pPort: 30095,
+										logTendermint: true,
+										})
 
 app.use(polls.txHandler)
 app.useBlock(polls.blockHandler)
 
-app.listen(3001)
+app.listen(3001).then(({ GCI }) => {
+ console.log(GCI)
+})
