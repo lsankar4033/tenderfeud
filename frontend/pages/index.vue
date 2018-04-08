@@ -2,13 +2,17 @@
   <section class="container">
     <NavBar />
     <NewPoll />
+    <label class="checkbox">
+      <input v-model="checked" type="checkbox">
+      Hide inactive polls
+    </label>
     <div v-for="activePoll in activePolls" :key="activePoll.question">
       <div class="box green">
         <vote-card :poll="activePoll" />
       </div>
     </div>
     <br />
-    <div v-for="inactivePoll in inactivePolls" :key="inactivePoll.question">
+    <div v-if="!checked" v-for="inactivePoll in inactivePolls" :key="inactivePoll.question">
       <div class="box red">
         <vote-card :poll="inactivePoll" />
       </div>
@@ -26,6 +30,11 @@ export default {
     VoteCard,
     NavBar,
     NewPoll,
+  },
+  data() {
+    return {
+      checked: false,
+    }
   },
   mounted() {
     this.getBlockchain()
@@ -80,5 +89,8 @@ export default {
 }
 .red {
   border: 1px solid red;
+}
+.box {
+  margin: 10px 2px
 }
 </style>

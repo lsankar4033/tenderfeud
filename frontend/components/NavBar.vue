@@ -17,7 +17,7 @@
 
     </div>
 
-    <a v-on:click="setCreatePoll" class="button is-info" id="new-poll-button">
+    <a v-on:click="setCreatePoll" class="button is-info" id="new-poll-button" v-if="!$store.state.createPollVisible">
       Create New Poll
     </a>
   </div>
