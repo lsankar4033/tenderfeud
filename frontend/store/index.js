@@ -20,7 +20,8 @@ const createStore = () => {
         votes: [],
         name: username,
         publicKey: pub,
-        address: utils.pubkeyToAddress(pub)
+        address: utils.pubkeyToAddress(pub),
+        balance: 0
       },
       createPollVisible: false
     },
@@ -112,9 +113,12 @@ const createStore = () => {
       set_user (state, userName) {
         state.user.name = userName
         let privkey = utils.sha256(userName)
-
+        
         state.user.publicKey = utils.privkeyToPubkey(privkey)
-        state.user.address = utils.pubkeyToAddress(state.user.publicKey)
+        const address = utils.pubkeyToAddress(state.user.publicKey)
+        state.user.address = address
+        const balance = state.balances[address]
+        state.user.balance = balance || 0
       },
       toggle_create_poll (state, pollVisible) {
         state.createPollVisible = pollVisible

@@ -16,9 +16,9 @@
               </div>
             </div>
           </div>
-          <div class="new-answer">
+          <div v-if="poll.active && !userVote" class="new-answer">
             <input class="input is-primary" v-model="newAnswer"/>
-            <button class="button is-small">New Answer</button>
+            <button class="button is-small" @click="vote({text: newAnswer})">New Answer</button>
           </div>
           <div v-if="userVote">
             You voted for {{ userVote }}
@@ -57,6 +57,7 @@ export default {
   data() {
     return {
       status: 'getInput',
+      newAnswer: '',
     }
   },
   computed: {
@@ -85,8 +86,6 @@ export default {
       const userAddress = this.$store.state.user.address
       for (let i = 0; i < options.length; i++) {
         for (let j = 0; j < this.poll.answers[options[i]].length; j++) {
-          // console.log(this.poll.answers[options[i]][j], pubKey)
-          // console.log(pubKey)
           if (this.poll.answers[options[i]][j] === userAddress) {
             return true
           }
@@ -97,9 +96,12 @@ export default {
   },
   methods: {
     vote(option) {
+      // if (!option) option = {
+      //   text: this.newAnswer
+      // }
       const payload = {
         pollId: this.poll.id,
-        answer: option.text, //consider using option index
+        answer: option.text || this.newAnswer, //consider using option index
       }
       this.status = 'loading'
       this.$store.dispatch('voteOnBlockchain', payload)
@@ -108,7 +110,7 @@ export default {
         this.status = 'getInput'
       }, 2000)
     }
-  }
+  },
 }
 </script>
 
@@ -116,6 +118,7 @@ export default {
 .flexcontainer {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 .options {
   display: flex;
