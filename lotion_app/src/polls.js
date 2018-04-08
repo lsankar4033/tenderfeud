@@ -71,7 +71,7 @@ function voteHandler(state, tx, chain) {
 }
 
 const minBlockDuration = 500;
-const defaultMinAnswers = 2;
+const defaultMinAnswers = 1;
 
 // TODO: Change payout validation such that payout + all other outstanding payotus not greater than creator's
 // balance
