@@ -26,9 +26,7 @@ const pollInitialState = {
 }
 
 // TODO: Use the initial state defined on polls module
-let app = lotion({  initialState: pollInitialState,
-										devMode: true,
-										})
+let app = lotion({  initialState: pollInitialState })
 
 app.use(polls.txHandler)
 app.useBlock(polls.blockHandler)
