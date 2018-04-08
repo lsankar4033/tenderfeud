@@ -21,7 +21,8 @@ const createStore = () => {
         name: username,
         publicKey: pub,
         address: utils.pubkeyToAddress(pub)
-      }
+      },
+      createPollVisible: false
     },
     actions: {
       async getBlockchain ({ commit }) {
@@ -117,6 +118,9 @@ const createStore = () => {
 
         state.user.publicKey = utils.privkeyToPubkey(privkey)
         state.user.address = utils.pubkeyToAddress(state.user.publicKey)
+      },
+      toggle_create_poll (state, pollVisible) {
+        state.createPollVisible = pollVisible
       }
     }
   })
