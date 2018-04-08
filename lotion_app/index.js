@@ -1,6 +1,7 @@
 "use strict";
 
 let lotion = require('lotion');
+require('dotenv').config({path: ".env-node1"});
 
 const awsPeer = '52.53.238.253:46658';
 
@@ -25,9 +26,11 @@ const pollInitialState = {
 }
 
 // TODO: Use the initial state defined on polls module
-let app = lotion({ initialState: pollInitialState })
+let app = lotion({  initialState: pollInitialState })
 
 app.use(polls.txHandler)
 app.useBlock(polls.blockHandler)
 
-app.listen(3001)
+app.listen(3001).then(({ GCI }) => {
+ console.log(GCI)
+})

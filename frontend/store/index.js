@@ -1,12 +1,15 @@
 import Vuex from 'vuex'
 import utils from '~/front_utils'
 let secp = require('secp256k1')
+
+// TODO: should we remove this bogus initialization?
 const username = 'blah'
 const priv = utils.sha256(username)
 const pub = secp.publicKeyCreate(priv)
 const createStore = () => {
   return new Vuex.Store({
     state: {
+      balances: {},
       blockChain: {},
       blockChainPollIds: [],
       activePollIds: [],
@@ -18,7 +21,8 @@ const createStore = () => {
         name: username,
         publicKey: pub,
         address: utils.pubkeyToAddress(pub)
-      }
+      },
+      createPollVisible: false
     },
     actions: {
       async getBlockchain ({ commit }) {
@@ -30,20 +34,48 @@ const createStore = () => {
         const pollId = payload.pollId
         const poll = state.activePolls[pollId]
         if (poll) {
-          // here we tell backend 
+          // here we tell backend
           // sign tx
-          const publicKey = utils.privkeyToPubkey(priv)
+          const privUser = utils.sha256(state.user.name)
+          const pubUser = secp.publicKeyCreate(privUser)
+
           const tx = {
             type: "vote",
             question: poll.question,
-            voterPubkey: publicKey,
+            voterPubkey: pubUser,
             answer: payload.answer
           }
           const sigHash = utils.getTxHash(tx)
+<<<<<<< HEAD
           tx.signature = utils.getSignature(sigHash, utils.sha256(state.user.name))
+=======
+          tx.signature = utils.getSignature(sigHash, privUser)
+          // console.log(utils.pubkeyToAddress(utils.('blah')))
+>>>>>>> master
           const vote = await this.$axios.$post('http://localhost:3001/txs', tx)
           commit('vote', payload)
         }
+      },
+      async createNewPoll ({ state, commit }, payload) {
+        const questionString = payload.questionString
+        // here we tell backend
+        // sign tx
+        const privUser = utils.sha256(state.user.name)
+        const pubUser = secp.publicKeyCreate(privUser)
+
+        const tx = {
+          type: "create",
+          question: questionString,
+          creatorPubkey: pubUser,
+          payout: payload.payout,
+          endBlock: state.blockChain.blockHeight + parseInt(payload.blockLifetime),
+          startBlock: state.blockChain.blockHeight,
+        }
+        console.log(tx)
+        const sigHash = utils.getTxHash(tx)
+        tx.signature = utils.getSignature(sigHash, privUser)
+        const create = await this.$axios.$post('http://localhost:3001/txs', tx)
+        console.log(create)
       }
     },
     mutations: {
@@ -77,6 +109,18 @@ const createStore = () => {
         }
         state.activePolls = Object.assign(state.activePolls, activePolls)
         state.inactivePolls = Object.assign({}, inactivePolls)
+
+        state.balances = blockchain.balances
+      },
+      set_user (state, userName) {
+        state.user.name = userName
+        let privkey = utils.sha256(userName)
+
+        state.user.publicKey = utils.privkeyToPubkey(privkey)
+        state.user.address = utils.pubkeyToAddress(state.user.publicKey)
+      },
+      toggle_create_poll (state, pollVisible) {
+        state.createPollVisible = pollVisible
       }
     }
   })
