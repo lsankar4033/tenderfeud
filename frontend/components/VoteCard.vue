@@ -99,16 +99,20 @@ export default {
       // if (!option) option = {
       //   text: this.newAnswer
       // }
-      const payload = {
-        pollId: this.poll.id,
-        answer: option.text || this.newAnswer, //consider using option index
+      if (this.$store.state.user.name) {
+        const payload = {
+          pollId: this.poll.id,
+          answer: option.text || this.newAnswer, //consider using option index
+        }
+        this.status = 'loading'
+        this.$store.dispatch('voteOnBlockchain', payload)
+        setTimeout(() => {
+          // change this to input received
+          this.status = 'getInput'
+        }, 2000)
+      } else {
+        this.$store.commit('authError', true)
       }
-      this.status = 'loading'
-      this.$store.dispatch('voteOnBlockchain', payload)
-      setTimeout(() => {
-        // change this to input received
-        this.status = 'getInput'
-      }, 2000)
     }
   },
 }
