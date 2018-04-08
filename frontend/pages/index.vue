@@ -1,5 +1,7 @@
 <template>
   <section class="container">
+    <NavBar />
+    <NewPoll />
     Active Polls
     <div v-for="activePoll in activePolls" :key="activePoll.question">
       <vote-card :poll="activePoll" />
@@ -21,14 +23,13 @@
 
 <script>
 import VoteCard from '~/components/VoteCard.vue'
+import NavBar from '~/components/NavBar.vue'
+import NewPoll from '~/components/NewPoll.vue'
 export default {
   components: {
     VoteCard,
-  },
-  data() {
-    return {
-      
-    }
+    NavBar,
+    NewPoll,
   },
   mounted() {
     this.getBlockchain()
