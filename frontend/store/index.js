@@ -36,16 +36,18 @@ const createStore = () => {
         if (poll) {
           // here we tell backend
           // sign tx
-          const publicKey = utils.privkeyToPubkey(priv)
+          const privUser = utils.sha256(state.user.name)
+          const pubUser = secp.publicKeyCreate(privUser)
+
           const tx = {
             type: "vote",
             question: poll.question,
-            voterPubkey: publicKey,
+            voterPubkey: pubUser,
             answer: payload.answer
           }
 
           const sigHash = utils.getTxHash(tx)
-          tx.signature = utils.getSignature(sigHash, utils.sha256(state.user.name))
+          tx.signature = utils.getSignature(sigHash, privUser)
           // console.log(utils.pubkeyToAddress(utils.('blah')))
           const vote = await this.$axios.$post('http://localhost:3001/txs', tx)
           // console.log(vote)
@@ -57,19 +59,22 @@ const createStore = () => {
         const questionString = payload.questionString
         // here we tell backend
         // sign tx
-        const publicKey = utils.privkeyToPubkey(priv)
+        const privUser = utils.sha256(state.user.name)
+        const pubUser = secp.publicKeyCreate(privUser)
+
         const tx = {
           type: "create",
           question: questionString,
-          creatorPubkey: publicKey,
+          creatorPubkey: pubUser,
           payout: payload.payout,
-          endBlock: state.blockChain.blockHeight + payload.blockLifetime,
+          endBlock: state.blockChain.blockHeight + parseInt(payload.blockLifetime),
           startBlock: state.blockChain.blockHeight,
         }
         console.log(tx)
         const sigHash = utils.getTxHash(tx)
-        tx.signature = utils.getSignature(sigHash, utils.sha256(state.user.name))
+        tx.signature = utils.getSignature(sigHash, privUser)
         const create = await this.$axios.$post('http://localhost:3001/txs', tx)
+        console.log(create)
       }
     },
     mutations: {
