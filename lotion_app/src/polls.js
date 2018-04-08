@@ -111,7 +111,7 @@ function createHandler(state, tx, chain) {
   }
 
   // Validate balance
-  
+
   let creatorBalance = state.balances[address] || 0;
   if (creatorBalance < tx.payout || (creatorBalance - creatorSum - tx.payout) < 0) {
     throw Error(`Creator's balance of ${creatorBalance} not enough to pay payout ${tx.payout}`);
@@ -233,7 +233,7 @@ function blockHandler(state, chain) {
 
     if (height >= poll.endBlock) {
       let clonedPoll = clone(poll);
-      state.inactivePolls.push(clonedPoll);
+      state.inactivePolls.unshift(clonedPoll);
       toRemove.push(questionHash);
 
       // Distribute winnings among winners
