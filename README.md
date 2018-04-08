@@ -44,17 +44,15 @@ Blockchain tech:
       - ~~revisit and fix payout logic for poll creation...~~
   - ~~methods for querying poll state, account balance~~
 - deploy v0.1 to cloud w/webapp
-- increase validator cluster size
-- build v0.2, dynamic validators
-  - i.e. a mechanism for anyone to be a validator
 
 Web tech:
 - ~~simple web frontend for viewing/voting on polls~~
-- styling
+- finish entire flow
+- styling/design
 
 Users:
 - Think of initial poll questions
-(INSERT MORE GROWTH HACKS)
 
 Presentation:
-- presentation
+- written part of the presentation (LS)
+- video presentation
